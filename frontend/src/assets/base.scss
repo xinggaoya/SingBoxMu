@@ -1,0 +1,12 @@
+
+$height: calc(100% - 2px);
+
+html, body {
+  margin: 0;
+  padding: 0;
+  height: $height;
+}
+
+#app {
+  height: $height;
+}

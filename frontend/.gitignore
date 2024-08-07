@@ -1,0 +1,8 @@
+/node_modules
+/src-tauri/target
+/auto-imports.d.ts
+/components.d.ts
+/pnpm-lock.yaml
+/dist
+/.idea
+/bindings

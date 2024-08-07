@@ -1,49 +1,31 @@
 <template>
-  <n-layout class="container" style="padding: 5px">
-    <n-layout-header class="rounded-r">
-      <n-card class="rounded-r" content-style="padding: 10px">
-        <HeaderLayout/>
+  <n-flex vertical class="height-100 max-main">
+    <n-card content-style="padding: 10px;">
+      <HeaderLayout/>
+    </n-card>
+    <n-flex style="height: calc(100% - 80px)">
+      <n-card content-style="padding: 0;" style="width: 200px;">
+        <LayoutMenu/>
       </n-card>
-    </n-layout-header>
-    <n-layout has-sider class="container" content-style="height: 100%"
-              style="padding: 5px 0;height: calc(100% - 60px)">
-      <n-layout-sider
-          class="container"
-          collapse-mode="width"
-          collapsed-width="0"
-          :width="260"
-          show-trigger="bar"
-          style="margin-right: 5px"
-          :native-scrollbar="false"
-      >
-        <n-card class="rounded-r" content-style="padding: 0">
-          <template v-slot:default>
-            <LayoutMenu/>
-          </template>
-        </n-card>
-      </n-layout-sider>
-      <n-layout content-style="height: 100%;"
-                :native-scrollbar="false">
+      <n-card content-style="padding: 10px;" style="flex: 1;">
         <RouterView/>
-      </n-layout>
-    </n-layout>
-  </n-layout>
+      </n-card>
+    </n-flex>
+  </n-flex>
 </template>
 
 <script lang="ts" setup>
 import LayoutMenu from '@/components/layout/menu/LayoutMenu.vue'
 import HeaderLayout from "@/components/layout/header/HeaderLayout.vue";
-
 </script>
 
 <style scoped>
 
-.header-text {
-  font-weight: bold;
-  font-size: large;
-  line-height: 32px;
+.max-main {
+  padding: 10px;
 }
 
-@media screen and (max-width: 768px) {
+.height-100 {
+  height: 100%;
 }
 </style>

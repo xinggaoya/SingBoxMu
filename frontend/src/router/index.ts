@@ -8,23 +8,23 @@ const router = createRouter({
       path: '/',
       name: 'index',
       component: Layout,
-      redirect: '/chat',
       children: [
         {
-          path: '/chat/:id?',
-          name: 'chat',
+          path: '/',
+          name: 'Home',
           component: () => import('@/views/HomeView.vue')
         },
+        {
+          path: '/sub',
+          name: 'SubView',
+          // route level code-splitting
+          // this generates a separate chunk (About.[hash].js) for this route
+          // which is lazy-loaded when the route is visited.
+          component: () => import('@/views/SubView.vue')
+        }
       ]
     },
-    {
-      path: '/login',
-      name: 'Login',
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import('@/views/ChatLogin.vue')
-    }
+
   ]
 })
 

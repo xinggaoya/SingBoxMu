@@ -13,17 +13,6 @@ import (
 
 // updateConfig 更新配置文件
 func updateConfig(config *model.SingBoxConfig) error {
-	backupFile, err := os.OpenFile("./sing-box/config.bak", os.O_CREATE|os.O_WRONLY|os.O_TRUNC, 0644)
-	if err != nil {
-		return err
-	}
-	defer backupFile.Close()
-
-	// 创建备份
-	err = json.NewEncoder(backupFile).Encode(config)
-	if err != nil {
-		return err
-	}
 
 	// 写入新的配置
 	file, err := os.OpenFile("./sing-box/config.json", os.O_WRONLY|os.O_TRUNC, 0644)
@@ -44,14 +33,12 @@ func updateConfig(config *model.SingBoxConfig) error {
 func SetProxy() error {
 	var config model.SingBoxConfig
 
-	// 读取文件 ./sing-box/config.json
-	file, err := os.Open("./sing-box/config.json")
+	content, err := os.ReadFile("./sing-box/config.json")
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
-	err = json.NewDecoder(file).Decode(&config)
+	err = json.Unmarshal(content, &config)
 	if err != nil {
 		return err
 	}
@@ -73,14 +60,12 @@ func SetProxy() error {
 func SetTun() error {
 	var config model.SingBoxConfig
 
-	// 读取文件 ./sing-box/config.json
-	file, err := os.Open("./sing-box/config.json")
+	content, err := os.ReadFile("./sing-box/config.json")
 	if err != nil {
 		return err
 	}
-	defer file.Close()
 
-	err = json.NewDecoder(file).Decode(&config)
+	err = json.Unmarshal(content, &config)
 	if err != nil {
 		return err
 	}

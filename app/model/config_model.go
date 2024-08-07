@@ -25,6 +25,13 @@ type SingBoxConfig struct {
 		} `json:"rules"`
 		Final string `json:"final"`
 	} `json:"dns"`
+	Ntp struct {
+		Enabled    bool   `json:"enabled,omitempty"`
+		Server     string `json:"server,omitempty"`
+		ServerPort int    `json:"server_port,omitempty"`
+		Interval   string `json:"interval,omitempty"`
+		Detour     string `json:"detour,omitempty"`
+	} `json:"ntp"`
 	Route struct {
 		RuleSet []struct {
 			Tag            string `json:"tag"`

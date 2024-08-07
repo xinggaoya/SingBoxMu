@@ -66,6 +66,15 @@ func (g *AppService) DownloadLatestKernel() {
 
 }
 
+// DownloadSubscription 下载订阅
+func (g *AppService) DownloadSubscription(url string) {
+	err := utils.DownloadFile(url, "./sing-box/config.json")
+	if err != nil {
+		slog.Error("Failed to download subscription", "error", err)
+		return
+	}
+}
+
 // ChangeProxyMode 设置代理
 func (g *AppService) ChangeProxyMode(mode string) {
 	if mode == "system" {
@@ -89,7 +98,7 @@ func (g *AppService) ChangeProxyMode(mode string) {
 	}
 }
 
-// StartCommand Function to start a command and return the Cmd struct
+// StartCommand 启动内核
 func (g *AppService) StartCommand() {
 	cmd := exec.Command("./sing-box/sing-box", "run", "-D", "./sing-box")
 	cmd.Stdout = os.Stdout

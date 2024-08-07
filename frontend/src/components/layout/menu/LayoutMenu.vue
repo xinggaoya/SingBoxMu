@@ -1,53 +1,53 @@
 <template>
   <div>
     <n-menu
-        :collapsed-width="64"
-        :collapsed-icon-size="22"
-        :options="menuStore.menuList"
+        :options="menuOptions"
         :render-icon="renderIcon"
         :render-label="renderLabel"
-        :value="menuStore.currentMenu"
+        v-model:value="currentMenu"
         :on-update:value="onSelect"
     >
     </n-menu>
-    <n-space vertical v-if="showMenu">
-      <n-skeleton height="40px" v-for="i in 10" :key="i" style="margin: 0 10px"/>
-    </n-space>
-    <n-empty description="你什么也找不到" v-if="!showMenu&&menuStore.menuList.length==0" style="margin: 20px">
-      <template #extra>
-        <n-button size="small" @click="createChat">
-          新建一个新的话题吧
-        </n-button>
-      </template>
-    </n-empty>
   </div>
 </template>
 
 <script setup lang="ts">
-import {h, onMounted, ref} from 'vue'
-import {useMenuStore} from '@/stores/menu/menuStore'
+import {h, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {NButton, NEllipsis, NIcon, NSpace} from 'naive-ui'
+import {NEllipsis, NIcon} from 'naive-ui'
 import {ChatbubbleOutline} from '@vicons/ionicons5'
 
-const menuStore = useMenuStore()
 const router = useRouter()
-const showMenu = ref(true)
-
-onMounted(() => {
-  menuStore.initMenu().then(() => {
-    showMenu.value = false
-  })
-})
-
-function createChat() {
-  showMenu.value = true
-}
+const currentMenu = ref(0)
+const menuOptions = [
+  {
+    label: '概括',
+    key: 0,
+  },
+  {
+    label: '订阅',
+    key: 1,
+  },
+  {
+    label: '设置',
+    key: 2,
+    disabled: true,
+  },
+]
 
 function onSelect(key: number) {
-  menuStore.currentMenu = key
-  menuStore.setRoleNameByKey(key)
-  router.push({path: `/chat/${key}`})
+  switch (key) {
+    case 0:
+      router.push('/')
+      break
+    case 1:
+      router.push('/sub')
+      break
+    case 2:
+      router.push('/setting')
+      break
+  }
+  currentMenu.value = key
 }
 
 function renderIcon() {

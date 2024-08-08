@@ -16,7 +16,7 @@ async function handelCloseWindow() {
 }
 
 async function handelHideWindow() {
-  await Window.Hide()
+  await Window.Minimise()
 }
 
 async function handelFullScreen() {
@@ -27,13 +27,13 @@ async function handelFullScreen() {
 </script>
 
 <template>
-  <div class="layout-header" style="--wails-draggable:drag">
+  <n-card class="layout-header" style="--wails-draggable:drag">
     <n-space justify="space-between">
       <n-flex>
         <n-image :src="logo" width="32" height="32"/>
         <n-text class="header-text" strong>{{ AppName }}</n-text>
       </n-flex>
-      <n-flex>
+      <n-flex style="--wails-draggable:no-drag">
 
         <n-tooltip placement="bottom" trigger="hover">
           <template #trigger>
@@ -85,7 +85,7 @@ async function handelFullScreen() {
         </n-tooltip>
       </n-flex>
     </n-space>
-  </div>
+  </n-card>
 </template>
 
 <style scoped>

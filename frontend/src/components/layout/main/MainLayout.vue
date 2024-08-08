@@ -1,31 +1,25 @@
 <template>
-  <n-flex vertical class="height-100 max-main">
-    <n-card content-style="padding: 10px;">
+  <div style="height: 100%;padding: 10px">
+    <div style="height: 80px">
       <HeaderLayout/>
-    </n-card>
-    <n-flex style="height: calc(100% - 80px)">
-      <n-card content-style="padding: 0;" style="width: 200px;">
+    </div>
+    <div style="height: calc(100% - 100px);display: flex">
+      <div style="height: 100%;width: 200px;margin-right: 5px">
         <LayoutMenu/>
-      </n-card>
-      <n-card content-style="padding: 10px;" style="flex: 1;">
+      </div>
+      <div style="height: 100%;flex: 1">
         <RouterView/>
-      </n-card>
-    </n-flex>
-  </n-flex>
+      </div>
+    </div>
+  </div>
+
 </template>
 
-<script lang="ts" setup>
-import LayoutMenu from '@/components/layout/menu/LayoutMenu.vue'
+<script setup>
+
+import LayoutMenu from "@/components/layout/menu/LayoutMenu.vue";
 import HeaderLayout from "@/components/layout/header/HeaderLayout.vue";
 </script>
 
 <style scoped>
-
-.max-main {
-  padding: 10px;
-}
-
-.height-100 {
-  height: 100%;
-}
 </style>

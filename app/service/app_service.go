@@ -5,6 +5,7 @@ import (
 	"changeme/app/utils"
 	"encoding/json"
 	"fmt"
+	"io"
 	"log/slog"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
+	"time"
 )
 
 type AppService struct{}
@@ -43,6 +45,7 @@ func (g *AppService) DownloadLatestKernel() {
 
 	err = json.NewDecoder(resp.Body).Decode(&releases)
 	if err != nil {
+		slog.Error("Failed to decode latest kernel version", "error", err)
 		return
 	}
 
@@ -68,9 +71,51 @@ func (g *AppService) DownloadLatestKernel() {
 
 // DownloadSubscription 下载订阅
 func (g *AppService) DownloadSubscription(url string) {
-	err := utils.DownloadFile(url, "./sing-box/config.json")
+	resp, err := http.Get(url)
 	if err != nil {
-		slog.Error("Failed to download subscription", "error", err)
+		slog.Error("Failed to get subscription", "error", err)
+		return
+	}
+	defer resp.Body.Close()
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		slog.Error("Failed to read subscription", "error", err)
+		return
+	}
+
+	var outInfo model.DownloadSingBoxConfig
+	err = json.Unmarshal(body, &outInfo)
+	if err != nil {
+		slog.Error("Failed to unmarshal subscription", "error", err)
+		return
+	}
+
+	// 获取模版
+	var inInfo model.SingBoxConfig
+	err = json.Unmarshal(model.SingBoxConfigTemplate, &inInfo)
+	if err != nil {
+		slog.Error("Failed to unmarshal template", "error", err)
+		return
+	}
+	var newInfo model.DownloadSingBoxConfig
+	for _, item := range outInfo.Outbounds {
+		// 只需要url不为空
+		if item.Server != "" {
+			inInfo.Outbounds = append(inInfo.Outbounds, item)
+			if newInfo.Outbounds == nil {
+				newInfo.Outbounds = append(newInfo.Outbounds, item)
+			}
+		}
+	}
+	inInfo.Outbounds[0].Outbounds[1] = newInfo.Outbounds[0].Tag
+	inInfo.Outbounds[1].Outbounds[0] = newInfo.Outbounds[0].Tag
+
+	// json转字符
+	data, err := json.Marshal(inInfo)
+	err = os.WriteFile("./sing-box/config.json", data, 0644)
+	if err != nil {
+		slog.Error("Failed to write config", "error", err)
 		return
 	}
 }
@@ -105,6 +150,7 @@ func (g *AppService) StartCommand() {
 	cmd.Stderr = os.Stderr
 
 	err := cmd.Start()
+	go listenLog()
 
 	if err != nil {
 		fmt.Printf("Error starting command: %v\n", err)
@@ -123,8 +169,23 @@ func (g *AppService) StopCommand() {
 			fmt.Printf("Error stopping command: %v\n", err)
 			return
 		}
+		// Wait for the process to exit gracefully
+		if err = singBox.Wait(); err != nil {
+			slog.Error("Error waiting for command to stop", "error", err)
+			return
+		}
+
+		singBox = nil
 		fmt.Printf("Stopped command with PID %d\n", singBox.Process.Pid)
 	}
+}
+
+// ListenLog 监听日志
+func listenLog() {
+	// 延迟10s
+	time.Sleep(10 * time.Second)
+	clash := utils.NewClashClient()
+	clash.GetLogs()
 }
 
 // RestartCommand Function to restart a command

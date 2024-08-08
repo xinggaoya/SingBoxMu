@@ -1,5 +1,5 @@
 
-$height: calc(100% - 2px);
+$height: 100%;
 
 html, body {
   margin: 0;
@@ -8,5 +8,5 @@ html, body {
 }
 
 #app {
-  height: $height;
+  height: calc(#{$height} - 20px);
 }

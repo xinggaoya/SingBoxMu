@@ -74,8 +74,8 @@ func SetTun() error {
 		{
 			Type:                     "tun",
 			Tag:                      "tun-in",
-			Inet4Address:             []string{"172.18.0.1/30"},
-			Inet6Address:             []string{"fdfe:dcba:9876::1/126"},
+			Inet4Address:             "172.18.0.1/30",
+			Inet6Address:             "fdfe:dcba:9876::1/126",
 			Mtu:                      1492,
 			AutoRoute:                true,
 			StrictRoute:              true,

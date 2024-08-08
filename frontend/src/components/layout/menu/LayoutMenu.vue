@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <n-card content-style="padding: 0;">
     <n-menu
         :options="menuOptions"
         :render-icon="renderIcon"
@@ -8,7 +8,7 @@
         :on-update:value="onSelect"
     >
     </n-menu>
-  </div>
+  </n-card>
 </template>
 
 <script setup lang="ts">

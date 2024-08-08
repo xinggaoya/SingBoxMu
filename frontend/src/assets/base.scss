@@ -7,6 +7,9 @@ html, body {
   height: $height;
 }
 
+body {
+}
+
 #app {
   height: calc(#{$height} - 20px);
 }

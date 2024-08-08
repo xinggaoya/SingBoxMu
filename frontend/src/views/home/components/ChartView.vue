@@ -1,18 +1,14 @@
 <template>
-  <v-chart class="chart" :option="option" />
+  <v-chart class="chart" :option="option"/>
 </template>
 
-<script setup>
-import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
+<script lang="ts" setup>
+import {use} from "echarts/core";
+import {CanvasRenderer} from "echarts/renderers";
 import {LineChart, PieChart} from "echarts/charts";
-import {
-  TitleComponent,
-  TooltipComponent,
-  LegendComponent, ToolboxComponent, GridComponent
-} from "echarts/components";
-import VChart, { THEME_KEY } from "vue-echarts";
-import { ref, provide } from "vue";
+import {GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent} from "echarts/components";
+import VChart, {THEME_KEY} from "vue-echarts";
+import {provide, ref} from "vue";
 
 use([
   CanvasRenderer,

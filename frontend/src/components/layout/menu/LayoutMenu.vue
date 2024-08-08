@@ -29,8 +29,12 @@ const menuOptions = [
     key: 1,
   },
   {
-    label: '设置',
+    label: '日志',
     key: 2,
+  },
+  {
+    label: '设置',
+    key: 3,
     disabled: true,
   },
 ]
@@ -44,7 +48,12 @@ function onSelect(key: number) {
       router.push('/sub')
       break
     case 2:
+      router.push('/log')
+      break
+    case 3:
       router.push('/setting')
+      break
+    default:
       break
   }
   currentMenu.value = key

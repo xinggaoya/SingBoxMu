@@ -18,15 +18,8 @@
       </n-flex>
     </n-card>
     <div>
-      <EchartsView/>
+      <ChartView/>
     </div>
-    <n-card style="height: calc(100% - 270px)" content-style="height: 100%;padding: 10px">
-      <n-scrollbar>
-        <p v-for="log in logs" :key="log">
-          {{ log.type }} {{ log.payload }}
-        </p>
-      </n-scrollbar>
-    </n-card>
   </div>
 </template>
 
@@ -34,11 +27,10 @@
 import {AppService} from '@api/changeme/app/service'
 import {onMounted, ref} from "vue";
 import {useMessage} from 'naive-ui'
+import ChartView from "@/views/home/components/ChartView.vue";
 import {Events} from "@wailsio/runtime";
-import EchartsView from "@/views/home/components/EchartsView.vue";
 
 const message = useMessage()
-const logs = ref<any>([])
 const songs = ref([
   {
     value: 'system',
@@ -51,12 +43,8 @@ const songs = ref([
 ])
 
 onMounted(() => {
-  Events.On("logs", (data: any) => {
-    logs.value.push(JSON.parse(data.data))
-    // 仅保留最新100条
-    if (logs.value.length > 100) {
-      logs.value.shift()
-    }
+  Events.On("traffic", (data: any) => {
+    console.log(data)
   })
 })
 

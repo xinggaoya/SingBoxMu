@@ -84,3 +84,86 @@ func (c *ClashClient) GetLogs() {
 	}
 
 }
+
+// GetTraffic 获取流量信息
+func (c *ClashClient) GetTraffic() {
+	request, err := c.DoRequest("GET", "/traffic", nil)
+	if err != nil {
+		slog.Error("获取流量信息失败", "err", err)
+		return
+	}
+	defer request.Body.Close()
+	if request.StatusCode != http.StatusOK {
+		slog.Error("获取流量信息失败", "status", request.Status)
+		return
+	}
+
+	reader := bufio.NewReader(request.Body)
+
+	for {
+		line, err := reader.ReadString('\n')
+		if err == io.EOF {
+			break // 读取完毕
+		} else if err != nil {
+			slog.Error("读取流量信息时发生错误", "err", err)
+			break
+		}
+		slog.Info("流量信息", "line", line)
+		application.Get().Events.Emit(&application.WailsEvent{
+			Name: "traffic",
+			Data: line,
+		})
+	}
+}
+
+// GetMemory 获取使用内存
+func (c *ClashClient) GetMemory() {
+	request, err := c.DoRequest("GET", "/memory", nil)
+	if err != nil {
+		slog.Error("获取内存信息失败", "err", err)
+		return
+	}
+	defer request.Body.Close()
+	if request.StatusCode != http.StatusOK {
+		slog.Error("获取内存信息失败", "status", request.Status)
+		return
+	}
+
+	reader := bufio.NewReader(request.Body)
+
+	for {
+		line, err := reader.ReadString('\n')
+		if err == io.EOF {
+			break // 读取完毕
+		} else if err != nil {
+			slog.Error("读取内存信息时发生错误", "err", err)
+			break
+		}
+		application.Get().Events.Emit(&application.WailsEvent{
+			Name: "memory",
+			Data: line,
+		})
+	}
+}
+
+// GetVersion 获取版本信息
+func (c *ClashClient) GetVersion() string {
+	request, err := c.DoRequest("GET", "/version", nil)
+	if err != nil {
+		slog.Error("获取版本信息失败", "err", err)
+		return ""
+	}
+	defer request.Body.Close()
+	if request.StatusCode != http.StatusOK {
+		slog.Error("获取版本信息失败", "status", request.Status)
+		return ""
+	}
+
+	body, err := io.ReadAll(request.Body)
+
+	if err != nil {
+		slog.Error("读取版本信息时发生错误", "err", err)
+		return ""
+	}
+	return string(body)
+}

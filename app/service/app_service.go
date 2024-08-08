@@ -13,7 +13,6 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
-	"time"
 )
 
 type AppService struct{}
@@ -182,10 +181,10 @@ func (g *AppService) StopCommand() {
 
 // ListenLog 监听日志
 func listenLog() {
-	// 延迟10s
-	time.Sleep(10 * time.Second)
 	clash := utils.NewClashClient()
 	clash.GetLogs()
+	clash.GetTraffic()
+	clash.GetMemory()
 }
 
 // RestartCommand Function to restart a command

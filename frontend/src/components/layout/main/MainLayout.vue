@@ -15,7 +15,7 @@
 
 </template>
 
-<script setup>
+<script lang="ts" setup>
 
 import LayoutMenu from "@/components/layout/menu/LayoutMenu.vue";
 import HeaderLayout from "@/components/layout/header/HeaderLayout.vue";

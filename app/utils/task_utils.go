@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"path/filepath"
+	"syscall"
 )
 
 /**
@@ -36,6 +37,9 @@ func (t *TaskUtils) CreateTask() error {
 	// Ensure the executable path is correctly quoted
 	createTaskCmd := fmt.Sprintf(`schtasks /create /tn %s /tr %s /sc onlogon /rl HIGHEST`, consts.TaskName, exePath)
 	cmd := exec.Command("cmd", "/C", createTaskCmd)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 
 	// Run the command
 	output, err := cmd.CombinedOutput()
@@ -52,6 +56,9 @@ func (t *TaskUtils) RunTask() error {
 	// Ensure the task name is correctly quoted
 	runTaskCmd := fmt.Sprintf(`schtasks /run /tn %s`, consts.TaskName)
 	cmd := exec.Command("cmd", "/C", runTaskCmd)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 
 	// Run the command
 	output, err := cmd.CombinedOutput()
@@ -66,6 +73,9 @@ func (t *TaskUtils) RunTask() error {
 func (t *TaskUtils) CheckTaskExists() (bool, error) {
 	checkTaskCmd := fmt.Sprintf(`schtasks /query /tn "%s"`, consts.TaskName)
 	cmd := exec.Command("cmd", "/C", checkTaskCmd)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 
 	// Run the command
 	output, err := cmd.CombinedOutput()
@@ -91,6 +101,9 @@ func (t *TaskUtils) StopTask() error {
 	// Ensure the task name is correctly quoted
 	stopTaskCmd := fmt.Sprintf(`schtasks /end /tn %s`, consts.TaskName)
 	cmd := exec.Command("cmd", "/C", stopTaskCmd)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 
 	// Run the command
 	output, err := cmd.CombinedOutput()
@@ -107,6 +120,9 @@ func (t *TaskUtils) DeleteTask() error {
 	// Ensure the task name is correctly quoted
 	deleteTaskCmd := fmt.Sprintf(`schtasks /delete /tn %s /f`, consts.TaskName)
 	cmd := exec.Command("cmd", "/C", deleteTaskCmd)
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
 
 	// Run the command
 	output, err := cmd.CombinedOutput()

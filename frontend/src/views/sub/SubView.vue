@@ -1,24 +1,6 @@
 <template>
-  <n-card class="about">
+  <n-card title="订阅" class="about">
     <n-flex>
-      <n-input v-model:value="url" placeholder="请输入订阅地址"/>
-      <n-button type="primary" ghost @click="downloadSub">下载订阅</n-button>
-    </n-flex>    <n-flex>
-      <n-input v-model:value="url" placeholder="请输入订阅地址"/>
-      <n-button type="primary" ghost @click="downloadSub">下载订阅</n-button>
-    </n-flex>    <n-flex>
-      <n-input v-model:value="url" placeholder="请输入订阅地址"/>
-      <n-button type="primary" ghost @click="downloadSub">下载订阅</n-button>
-    </n-flex>    <n-flex>
-      <n-input v-model:value="url" placeholder="请输入订阅地址"/>
-      <n-button type="primary" ghost @click="downloadSub">下载订阅</n-button>
-    </n-flex>    <n-flex>
-      <n-input v-model:value="url" placeholder="请输入订阅地址"/>
-      <n-button type="primary" ghost @click="downloadSub">下载订阅</n-button>
-    </n-flex>    <n-flex>
-      <n-input v-model:value="url" placeholder="请输入订阅地址"/>
-      <n-button type="primary" ghost @click="downloadSub">下载订阅</n-button>
-    </n-flex>    <n-flex>
       <n-input v-model:value="url" placeholder="请输入订阅地址"/>
       <n-button type="primary" ghost @click="downloadSub">下载订阅</n-button>
     </n-flex>

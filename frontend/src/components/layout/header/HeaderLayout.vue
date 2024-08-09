@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {BulbOutline, ChevronDown, CloseCircleOutline, Code,} from '@vicons/ionicons5'
-import logo from "@/assets/app-icon.png";
+import logo from "@/assets/appicon.png";
 import useAppStore from "@/stores/app/AppStore.ts";
 import {Window} from "@wailsio/runtime";
 
@@ -30,7 +30,7 @@ async function handelFullScreen() {
   <n-card class="layout-header" style="--wails-draggable:drag">
     <n-space justify="space-between">
       <n-flex>
-        <n-image :src="logo" width="32" height="32"/>
+        <n-image :src="logo" width="38" height="38"/>
         <n-text class="header-text" strong>{{ AppName }}</n-text>
       </n-flex>
       <n-flex style="--wails-draggable:no-drag">

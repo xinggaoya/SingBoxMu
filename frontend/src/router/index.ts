@@ -18,11 +18,17 @@ const router = createRouter({
                     path: '/sub',
                     name: 'SubView',
                     component: () => import('@/views/sub/SubView.vue')
-                }, {
+                },
+                {
                     path: '/log',
                     name: 'Log',
                     component: () => import('@/views/log/LogView.vue')
-                }
+                },
+                {
+                    path: '/setting',
+                    name: 'Setting',
+                    component: () => import('@/views/setting/SettingView.vue')
+                },
             ]
         },
 

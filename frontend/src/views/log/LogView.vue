@@ -1,28 +1,27 @@
 <template>
   <n-card style="height: 100%" content-style="height: 100%;padding: 10px">
     <n-scrollbar>
-      <p v-for="log in logs" :key="log">
-        {{ log.type }} {{ log.payload }}
-      </p>
+      <n-flex vertical>
+        <div v-for="(log,index) in events.logs" :key="index">
+          <n-tag :type="log.type"> {{ log.type }}</n-tag>
+          {{ log.payload }}
+        </div>
+      </n-flex>
     </n-scrollbar>
   </n-card>
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref} from "vue";
+import {onBeforeUnmount} from "vue";
 import {Events} from "@wailsio/runtime";
+import {useEventsStore} from "@/stores/events/EventsStore.ts";
 
-const logs = ref<any>([])
+const events = useEventsStore()
 
-onMounted(() => {
-  Events.On("logs", (data: any) => {
-    logs.value.push(JSON.parse(data.data))
-    // 仅保留最新100条
-    if (logs.value.length > 100) {
-      logs.value.shift()
-    }
-  })
-})
+onBeforeUnmount(() => {
+  Events.Off("logs");  // 清除事件监听器
+});
+
 
 </script>
 <style scoped>

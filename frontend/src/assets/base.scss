@@ -11,5 +11,5 @@ body {
 }
 
 #app {
-  height: calc(#{$height} - 20px);
+  height: $height;
 }

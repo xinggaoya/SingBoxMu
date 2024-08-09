@@ -1,37 +1,23 @@
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
-import {useRouter} from "vue-router";
 
 
 export const useAppStore = defineStore('app', () => {
+    // 运行状态
+    const isRunning = ref(false)
+    // 代理模式
+    const proxyMode = ref('')
     const isDark = ref(false)
-    const userToken = ref('')
-    const router = useRouter()
 
     function toggleDark() {
         isDark.value = !isDark.value
     }
 
-    function getUserToken() {
-        return userToken.value
-    }
-
-    function setToken(token: string) {
-        userToken.value = token
-    }
-
-    function clearToken() {
-        userToken.value = ''
-        router.push('/login')
-    }
-
     return {
+        isRunning,
+        proxyMode,
         isDark,
-        userToken,
         toggleDark,
-        setToken,
-        clearToken,
-        getUserToken
     }
 }, {
     persist: true,

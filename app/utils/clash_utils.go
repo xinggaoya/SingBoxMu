@@ -10,6 +10,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 /**
@@ -81,6 +82,7 @@ func (c *ClashClient) GetLogs() {
 			Name: "logs",
 			Data: line,
 		})
+		time.Sleep(1 * time.Second)
 	}
 
 }
@@ -108,11 +110,12 @@ func (c *ClashClient) GetTraffic() {
 			slog.Error("读取流量信息时发生错误", "err", err)
 			break
 		}
-		slog.Info("流量信息", "line", line)
 		application.Get().Events.Emit(&application.WailsEvent{
 			Name: "traffic",
 			Data: line,
 		})
+
+		time.Sleep(1 * time.Second)
 	}
 }
 
@@ -143,6 +146,9 @@ func (c *ClashClient) GetMemory() {
 			Name: "memory",
 			Data: line,
 		})
+
+		// 休眠2s
+		time.Sleep(1 * time.Second)
 	}
 }
 

@@ -1,0 +1,7 @@
+{
+  "name": "SingBoxMu",
+  "company": "Moncn",
+  "version": "1.1.0.0",
+  "icon_path": "..\\build\\icon.ico",
+  "program_path": ".\\SingBoxMu.exe"
+}

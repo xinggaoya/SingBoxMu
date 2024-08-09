@@ -1,43 +1,69 @@
 <template>
-  <n-card content-style="padding: 0;">
-    <n-menu
-        :options="menuOptions"
-        :render-icon="renderIcon"
-        :render-label="renderLabel"
-        v-model:value="currentMenu"
-        :on-update:value="onSelect"
-    >
-    </n-menu>
-  </n-card>
+  <div>
+    <n-card content-style="padding: 0;">
+      <n-menu
+          :options="menuOptions"
+          v-model:value="currentMenu"
+          :on-update:value="onSelect"
+      >
+      </n-menu>
+    </n-card>
+    <n-card style="margin-top: 5px">
+      <n-flex vertical>
+        <n-tag type="primary">
+          <span>使用内存：{{ events.memory.inuse }}mb</span>
+        </n-tag>
+        <n-tag type="success">
+          <span>内存限制：{{ events.memory.oslimit }}mb</span>
+        </n-tag>
+      </n-flex>
+    </n-card>
+  </div>
 </template>
 
 <script setup lang="ts">
 import {h, ref} from 'vue'
 import {useRouter} from 'vue-router'
-import {NEllipsis, NIcon} from 'naive-ui'
-import {ChatbubbleOutline} from '@vicons/ionicons5'
+import {NIcon} from 'naive-ui'
+import {AtCircleOutline, BarChartOutline, InformationCircleOutline, SettingsOutline} from '@vicons/ionicons5'
+import {useEventsStore} from "@/stores/events/EventsStore.ts";
 
 const router = useRouter()
 const currentMenu = ref(0)
+const events = useEventsStore()
 const menuOptions = [
   {
     label: '概括',
     key: 0,
+    icon: () => {
+      return h(NIcon, null, {default: () => h(BarChartOutline)})
+    },
   },
   {
     label: '订阅',
     key: 1,
+    icon: () => {
+      return h(NIcon, null, {default: () => h(AtCircleOutline)})
+    }
   },
   {
     label: '日志',
     key: 2,
+    icon: () => {
+      return h(NIcon, null, {default: () => h(InformationCircleOutline)})
+    }
   },
   {
     label: '设置',
     key: 3,
-    disabled: true,
+    icon: () => {
+      return h(NIcon, null, {
+        default: () => h(SettingsOutline)
+      })
+    }
   },
 ]
+
 
 function onSelect(key: number) {
   switch (key) {
@@ -59,35 +85,8 @@ function onSelect(key: number) {
   currentMenu.value = key
 }
 
-function renderIcon() {
-  return h(NIcon, null, {default: () => h(ChatbubbleOutline)})
-}
-
-function renderLabel(option: any) {
-  return h(NEllipsis, {
-    class: 'menu-label',
-  }, option.label)
-}
-
 </script>
 
 <style lang="scss" scoped>
-
-.n-menu {
-
-  ::v-deep(.n-menu-item-content-header) {
-    display: flex;
-    justify-content: space-between;
-  }
-
-  ::v-deep(.menu-delete-button) {
-    visibility: hidden;
-  }
-
-  ::v-deep( .n-menu-item:hover .menu-delete-button ) {
-    visibility: initial;
-  }
-
-}
 
 </style>

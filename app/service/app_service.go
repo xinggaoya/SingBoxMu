@@ -13,6 +13,7 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
+	"time"
 )
 
 type AppService struct{}
@@ -148,15 +149,20 @@ func (g *AppService) StartCommand() {
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
+	cmd.SysProcAttr = &syscall.SysProcAttr{
+		HideWindow: true,
+	}
+
 	err := cmd.Start()
-	go listenLog()
 
 	if err != nil {
 		fmt.Printf("Error starting command: %v\n", err)
 	}
 
-	fmt.Printf("Started command with PID %d\n", cmd.Process.Pid)
+	slog.Info("Started command with PID %d\n", cmd.Process.Pid)
 	singBox = cmd
+
+	go ListenKernelInfo()
 }
 
 // StopCommand Function to stop a running command
@@ -175,20 +181,48 @@ func (g *AppService) StopCommand() {
 		}
 
 		singBox = nil
-		fmt.Printf("Stopped command with PID %d\n", singBox.Process.Pid)
+		slog.Info("Stopped command")
 	}
 }
 
-// ListenLog 监听日志
-func listenLog() {
+// GetVersion 获取内核版本
+func (g *AppService) GetVersion() string {
 	clash := utils.NewClashClient()
-	clash.GetLogs()
-	clash.GetTraffic()
-	clash.GetMemory()
+	return clash.GetVersion()
+}
+
+// ListenKernelInfo 监听日志
+func ListenKernelInfo() {
+	// 延迟10s
+	time.Sleep(5 * time.Second)
+	clash := utils.NewClashClient()
+	go clash.GetLogs()
+	go clash.GetMemory()
+	go clash.GetTraffic()
 }
 
 // RestartCommand Function to restart a command
 func (g *AppService) RestartCommand() {
 	g.StopCommand()
 	g.StartCommand()
+}
+
+// SetAutoStart 设置开机自启
+func (g *AppService) SetAutoStart() {
+	// 获取当前系统类型
+	task := utils.NewTaskUtils()
+	if err := task.CreateTask(); err != nil {
+		slog.Error("Failed to create task", "error", err)
+		return
+	}
+}
+
+// RemoveAutoStart 移除开机自启
+func (g *AppService) RemoveAutoStart() {
+	// 获取当前系统类型
+	task := utils.NewTaskUtils()
+	if err := task.DeleteTask(); err != nil {
+		slog.Error("Failed to delete task", "error", err)
+		return
+	}
 }

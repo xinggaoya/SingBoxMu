@@ -1,13 +1,20 @@
 <script setup lang="ts">
 import {RouterView} from 'vue-router'
-import {darkTheme, dateZhCN, useOsTheme, zhCN} from "naive-ui";
+import {darkTheme, dateZhCN, zhCN} from "naive-ui";
 import {computed} from "vue";
 import useAppStore from "@/stores/app/AppStore.ts";
 
 const appStore = useAppStore()
 
 const theme = computed(() => {
-  return useOsTheme().value === 'dark' || appStore.isDark ? darkTheme : null
+  // 获取元素
+  const element = document.getElementById('max-main-view');
+  if (appStore.isDark) {
+    element?.classList.remove('app-background');
+    return darkTheme
+  }
+  element?.classList.add('app-background');
+  return null
 })
 
 const themeOverrides = {
@@ -40,7 +47,7 @@ const themeOverrides = {
 
 <template>
   <n-config-provider :theme :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN" class="container">
-    <n-global-style />
+    <n-global-style/>
     <n-message-provider>
       <n-dialog-provider>
         <RouterView/>

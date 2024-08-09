@@ -1,43 +1,49 @@
 <template>
-  <v-chart class="chart" :option="option"/>
+  <v-chart class="chart" :option="option" />
 </template>
 
 <script lang="ts" setup>
-import {use} from "echarts/core";
-import {CanvasRenderer} from "echarts/renderers";
-import {LineChart, PieChart} from "echarts/charts";
-import {GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent} from "echarts/components";
-import VChart, {THEME_KEY} from "vue-echarts";
-import {provide, ref} from "vue";
+import { use } from "echarts/core";
+import { CanvasRenderer } from "echarts/renderers";
+import { LineChart } from "echarts/charts";
+import {
+  GridComponent,
+  LegendComponent,
+  TitleComponent,
+  ToolboxComponent,
+  TooltipComponent
+} from "echarts/components";
+import VChart, { THEME_KEY } from "vue-echarts";
+import {provide, ref, watch} from "vue";
+import {useEventsStore} from "@/stores/events/EventsStore.ts";
 
 use([
   CanvasRenderer,
-  PieChart,
+  LineChart,
   TitleComponent,
   TooltipComponent,
   GridComponent,
-  LineChart,
   ToolboxComponent,
   LegendComponent
 ]);
-// dark，light
+
 provide(THEME_KEY, "light");
 
-const option = ref({
+const option = ref<any>({
   title: {
-    text: 'Stacked Area Chart'
+    text: "实时流量 (最近1分钟)"
   },
   tooltip: {
-    trigger: 'axis',
+    trigger: "axis",
     axisPointer: {
-      type: 'cross',
+      type: "cross",
       label: {
-        backgroundColor: '#6a7985'
+        backgroundColor: "#6a7985"
       }
     }
   },
   legend: {
-    data: ['Email', 'Union Ads', 'Video Ads', 'Direct', 'Search Engine']
+    data: ["上行", "下行"]
   },
   toolbox: {
     feature: {
@@ -45,84 +51,69 @@ const option = ref({
     }
   },
   grid: {
-    left: '3%',
-    right: '4%',
-    bottom: '3%',
+    left: "3%",
+    right: "4%",
+    bottom: "3%",
     containLabel: true
   },
-  xAxis: [
-    {
-      type: 'category',
-      boundaryGap: false,
-      data: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
+  xAxis: {
+    type: "time",
+    splitLine: {
+      show: false
     }
-  ],
-  yAxis: [
-    {
-      type: 'value'
-    }
-  ],
+  },
+  yAxis: {
+    type: "value"
+  },
   series: [
     {
-      name: 'Email',
-      type: 'line',
-      stack: 'Total',
+      name: "上行",
+      type: "line",
+      smooth: true,
       areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [120, 132, 101, 134, 90, 230, 210]
+      data: []
     },
     {
-      name: 'Union Ads',
-      type: 'line',
-      stack: 'Total',
+      name: "下行",
+      type: "line",
+      smooth: true,
       areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [220, 182, 191, 234, 290, 330, 310]
-    },
-    {
-      name: 'Video Ads',
-      type: 'line',
-      stack: 'Total',
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [150, 232, 201, 154, 190, 330, 410]
-    },
-    {
-      name: 'Direct',
-      type: 'line',
-      stack: 'Total',
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [320, 332, 301, 334, 390, 330, 320]
-    },
-    {
-      name: 'Search Engine',
-      type: 'line',
-      stack: 'Total',
-      label: {
-        show: true,
-        position: 'top'
-      },
-      areaStyle: {},
-      emphasis: {
-        focus: 'series'
-      },
-      data: [820, 932, 901, 934, 1290, 1330, 1320]
+      data: []
     }
   ]
 });
+
+const MAX_DATA_POINTS = 6; // 限制数据点数量
+const events = useEventsStore()
+
+watch(events.traffic, (value)=>{
+  handleTrafficData(value)
+})
+
+
+function handleTrafficData(data:any) {
+  const { up, down } = data;
+  updateData(up, down);
+}
+
+function updateData(up: number, down: number) {
+  const now = Date.now();
+
+  if (option.value.series[0].data.length >= MAX_DATA_POINTS) {
+    // 移除最老的数据点
+    option.value.series[0].data.shift();
+    option.value.series[1].data.shift();
+  }
+
+  // 更新数据
+  option.value.series[0].data.push([now, up]);
+  option.value.series[1].data.push([now, down]);
+}
+
 </script>
 
 <style scoped>
 .chart {
-  height: 400px;
+  height: 100%;
 }
 </style>

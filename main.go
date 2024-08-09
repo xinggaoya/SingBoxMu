@@ -53,11 +53,17 @@ func main() {
 			Backdrop:                application.MacBackdropTranslucent,
 			TitleBar:                application.MacTitleBarHiddenInset,
 		},
-		URL:       "/",
-		Frameless: true,
+		BackgroundColour: application.NewRGB(27, 38, 54),
+		URL:              "/",
+		Frameless:        true,
 	})
 
+	file, err := assets.ReadFile("frontend/dist/appicon.png")
+	if err != nil {
+		log.Fatal(err)
+	}
 	tray := app.NewSystemTray()
+	tray.SetIcon(file)
 	menu := &application.Menu{}
 	menu.Add("退出").OnClick(func(context *application.Context) {
 		app.Quit()
@@ -72,21 +78,8 @@ func main() {
 		}
 	})
 
-	// Create a goroutine that emits an event containing the current time every second.
-	// The frontend can listen to this event and update the UI accordingly.
-	//go func() {
-	//	for {
-	//		now := time.Now().Format(time.RFC1123)
-	//		app.Events.Emit(&application.WailsEvent{
-	//			Name: "time",
-	//			Data: now,
-	//		})
-	//		time.Sleep(time.Second)
-	//	}
-	//}()
-
 	// Run the application. This blocks until the application has been exited.
-	err := app.Run()
+	err = app.Run()
 
 	// If an error occurred while running the application, log it and exit.
 	if err != nil {

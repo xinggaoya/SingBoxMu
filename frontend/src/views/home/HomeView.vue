@@ -25,14 +25,16 @@
 
 <script setup lang="ts">
 import {AppService} from '@api/changeme/app/service'
-import {ref} from "vue";
+import {onMounted, ref} from "vue";
 import {useMessage} from 'naive-ui'
 import ChartView from "@/views/home/components/ChartView.vue";
 import useAppStore from "@/stores/app/AppStore.ts";
 import {useEventsStore} from "@/stores/events/EventsStore.ts";
+import {useConfigStore} from "@/stores/config/ConfigStore";
 
 const message = useMessage()
 const appStore = useAppStore()
+const config = useConfigStore()
 const events = useEventsStore()
 const songs = ref([
   {
@@ -45,34 +47,57 @@ const songs = ref([
   }
 ])
 
+onMounted(() => {
+  appStore.getKernelVersion()
+  if (config.form.autoRun && !appStore.isRunning) {
+    startSingBox()
+  }
+})
+
 // 切换代理模式
 function changeProxyMode(mode: string) {
-  AppService.ChangeProxyMode(mode).then(() => {
-    message.success("切换成功")
+  AppService.ChangeProxyMode(mode).then((res) => {
+    if (res.code === 10000) {
+      message.success("切换成功")
+    } else {
+      message.error(res.msg)
+    }
   })
 }
 
 function downloadTheKernel() {
-  AppService.DownloadLatestKernel().then(() => {
-    message.success("下载完成")
+  AppService.DownloadLatestKernel().then((res) => {
+    if (res.code === 10000) {
+      message.success("下载完成")
+    } else {
+      message.error(res.msg)
+    }
   })
 }
 
 function startSingBox() {
-  AppService.StartCommand().then(() => {
-    appStore.isRunning = true
-    message.success("运行成功")
-    // 延迟5s
-    setTimeout(() => {
-      events.listen()
-    }, 5000)
+  AppService.StartCommand().then((res) => {
+    if (res.code === 10000) {
+      appStore.isRunning = true
+      message.success("运行成功")
+      // 延迟5s
+      setTimeout(() => {
+        events.listen()
+      }, 5000)
+    } else {
+      message.error(res.msg)
+    }
   })
 }
 
 function stopSingBox() {
-  AppService.StopCommand().then(() => {
-    appStore.isRunning = false
-    message.success("停止成功")
+  AppService.StopCommand().then((res) => {
+    if (res.code === 10000) {
+      appStore.isRunning = false
+      message.success("停止成功")
+    } else {
+      message.error(res.msg)
+    }
   })
 }
 </script>

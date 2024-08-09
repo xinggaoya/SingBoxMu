@@ -6,6 +6,9 @@
         <n-form-item label="开机自启" path="autoStart">
           <n-switch v-model:value="configStore.form.autoStart" @update-value="updateAutoStart"/>
         </n-form-item>
+        <n-form-item label="内核自启" path="autoRun">
+          <n-switch v-model:value="configStore.form.autoRun"/>
+        </n-form-item>
       </n-form>
     </n-scrollbar>
   </n-card>

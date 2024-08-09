@@ -1,5 +1,5 @@
 import {createPinia} from 'pinia'
-import {App} from "vue";
+import type {App} from "vue";
 import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
 
 export function usePinia(app: App) {

@@ -42,19 +42,28 @@ export const useEventsStore = defineStore('Events', () => {
             })
             Events.On("traffic", (data: any) => {
                 const info = JSON.parse(data.data)
-                traffic.value = info
-                totalUseTraffic.value = info.up + info.down
+                // 转换为MB 保留小数点后2位
+                info.up = (info.up / 1024 / 1024)
+                info.down = (info.down / 1024 / 1024)
+                traffic.value.up = info.up
+                traffic.value.down = info.down
+                totalUseTraffic.value += (info.up + info.down)
             })
             Events.On("memory", (data: any) => {
                 const info = JSON.parse(data.data)
-                // 转换为MB
-                info.inuse = info.inuse / 1024 / 1024
-                info.oslimit = info.oslimit / 1024 / 1024
+                // 转换为MB 保留小数点后2位
+                info.inuse = (info.inuse / 1024 / 1024).toFixed(2)
+                info.oslimit = (info.oslimit / 1024 / 1024).toFixed(2)
                 memory.value = info
             })
         }
 
         return {logs, traffic, memory, listen, totalUseTraffic}
     },
-    {persist: true}
+    {
+        persist: {
+            storage: localStorage,
+            paths: ['totalUseTraffic']
+        }
+    }
 )

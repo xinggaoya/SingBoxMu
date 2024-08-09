@@ -4,7 +4,7 @@ vars:
   APP_NAME: "SingBoxMu"
   BIN_DIR: "bin"
   VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
-  PRODUCTION: "false"
+  PRODUCTION: "true"
 tasks:
 
   ## -------------------------- Build -------------------------- ##

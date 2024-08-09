@@ -153,23 +153,23 @@ func (c *ClashClient) GetMemory() {
 }
 
 // GetVersion 获取版本信息
-func (c *ClashClient) GetVersion() string {
+func (c *ClashClient) GetVersion() (string, error) {
 	request, err := c.DoRequest("GET", "/version", nil)
 	if err != nil {
 		slog.Error("获取版本信息失败", "err", err)
-		return ""
+		return "", err
 	}
 	defer request.Body.Close()
 	if request.StatusCode != http.StatusOK {
 		slog.Error("获取版本信息失败", "status", request.Status)
-		return ""
+		return "", err
 	}
 
 	body, err := io.ReadAll(request.Body)
 
 	if err != nil {
 		slog.Error("读取版本信息时发生错误", "err", err)
-		return ""
+		return "", err
 	}
-	return string(body)
+	return string(body), nil
 }

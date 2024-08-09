@@ -64,6 +64,7 @@ func main() {
 	}
 	tray := app.NewSystemTray()
 	tray.SetIcon(file)
+	tray.SetLabel("SingBoxMu For Windows")
 	menu := &application.Menu{}
 	menu.Add("退出").OnClick(func(context *application.Context) {
 		app.Quit()

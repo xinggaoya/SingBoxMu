@@ -88,6 +88,8 @@ const events = useEventsStore()
 
 watch(events.traffic, (value)=>{
   handleTrafficData(value)
+},{
+  deep: true
 })
 
 
@@ -100,9 +102,8 @@ function updateData(up: number, down: number) {
   const now = Date.now();
 
   if (option.value.series[0].data.length >= MAX_DATA_POINTS) {
-    // 移除最老的数据点
+    // 移除旧的数据点
     option.value.series[0].data.shift();
-    option.value.series[1].data.shift();
   }
 
   // 更新数据

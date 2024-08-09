@@ -2,6 +2,7 @@ package service
 
 import (
 	"changeme/app/model"
+	"changeme/app/model/response"
 	"changeme/app/utils"
 	"encoding/json"
 	"fmt"
@@ -20,12 +21,8 @@ type AppService struct{}
 
 var singBox *exec.Cmd
 
-func (g *AppService) Greet(name string) string {
-	return "Hello " + name + "!"
-}
-
 // DownloadLatestKernel 下载最新内核
-func (g *AppService) DownloadLatestKernel() {
+func (g *AppService) DownloadLatestKernel() response.ResInfo {
 	// 获取当前系统类型
 	goos := runtime.GOOS
 	// 获取系统架构
@@ -37,7 +34,7 @@ func (g *AppService) DownloadLatestKernel() {
 	resp, err := http.Get("https://api.github.com/repos/SagerNet/sing-box/releases/latest")
 	if err != nil {
 		slog.Error("Failed to get latest kernel version", "error", err)
-		return
+		return response.Error("网络连接失败")
 	}
 	defer resp.Body.Close()
 
@@ -46,7 +43,7 @@ func (g *AppService) DownloadLatestKernel() {
 	err = json.NewDecoder(resp.Body).Decode(&releases)
 	if err != nil {
 		slog.Error("Failed to decode latest kernel version", "error", err)
-		return
+		return response.Error("获取最新内核版本失败")
 	}
 
 	for _, info := range releases.Assets {
@@ -55,40 +52,40 @@ func (g *AppService) DownloadLatestKernel() {
 			err = utils.DownloadFile(info.BrowserDownloadUrl, fileName)
 			if err != nil {
 				slog.Error("Failed to download latest kernel version", "error", err)
-				return
+				return response.Error("下载最新内核版本失败")
 			}
 			// 解压
 			err = utils.Unzip(fileName, "./sing-box")
 			if err != nil {
 				slog.Error("Failed to unzip latest kernel version", "error", err)
-				return
+				return response.Error("解压最新内核版本失败")
 			}
 			break
 		}
 	}
-
+	return response.Success("下载最新内核版本成功")
 }
 
 // DownloadSubscription 下载订阅
-func (g *AppService) DownloadSubscription(url string) {
+func (g *AppService) DownloadSubscription(url string) response.ResInfo {
 	resp, err := http.Get(url)
 	if err != nil {
 		slog.Error("Failed to get subscription", "error", err)
-		return
+		return response.Error("下载订阅失败")
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
 		slog.Error("Failed to read subscription", "error", err)
-		return
+		return response.Error("解析订阅失败")
 	}
 
 	var outInfo model.DownloadSingBoxConfig
 	err = json.Unmarshal(body, &outInfo)
 	if err != nil {
 		slog.Error("Failed to unmarshal subscription", "error", err)
-		return
+		return response.Error("解析订阅失败")
 	}
 
 	// 获取模版
@@ -96,7 +93,7 @@ func (g *AppService) DownloadSubscription(url string) {
 	err = json.Unmarshal(model.SingBoxConfigTemplate, &inInfo)
 	if err != nil {
 		slog.Error("Failed to unmarshal template", "error", err)
-		return
+		return response.Error("默认配置解析失败")
 	}
 	var newInfo model.DownloadSingBoxConfig
 	for _, item := range outInfo.Outbounds {
@@ -116,35 +113,39 @@ func (g *AppService) DownloadSubscription(url string) {
 	err = os.WriteFile("./sing-box/config.json", data, 0644)
 	if err != nil {
 		slog.Error("Failed to write config", "error", err)
-		return
+		return response.Error("写入配置失败")
 	}
+	return response.Success("下载订阅成功")
 }
 
 // ChangeProxyMode 设置代理
-func (g *AppService) ChangeProxyMode(mode string) {
+func (g *AppService) ChangeProxyMode(mode string) response.ResInfo {
 	if mode == "system" {
 		err := utils.SetProxy()
 		if err != nil {
 			slog.Error("Failed to set proxy", "error", err)
-			return
+			return response.Error("Failed to set proxy")
 		}
 		if singBox != nil && singBox.Process != nil {
 			g.RestartCommand()
 		}
+		return response.Success("设置成功")
 	} else if mode == "tun" {
 		err := utils.SetTun()
 		if err != nil {
 			slog.Error("Failed to set tun", "error", err)
-			return
+			return response.Error("Failed to set tun")
 		}
 		if singBox != nil && singBox.Process != nil {
 			g.RestartCommand()
 		}
+		return response.Success("设置成功")
 	}
+	return response.Error("切换失败，未知的模式")
 }
 
 // StartCommand 启动内核
-func (g *AppService) StartCommand() {
+func (g *AppService) StartCommand() response.ResInfo {
 	cmd := exec.Command("./sing-box/sing-box", "run", "-D", "./sing-box")
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -157,38 +158,36 @@ func (g *AppService) StartCommand() {
 
 	if err != nil {
 		fmt.Printf("Error starting command: %v\n", err)
+		return response.Error("Error starting command")
 	}
 
 	slog.Info("Started command with PID %d\n", cmd.Process.Pid)
 	singBox = cmd
 
 	go ListenKernelInfo()
+
+	return response.Success("内核已启动")
 }
 
-// StopCommand Function to stop a running command
-func (g *AppService) StopCommand() {
+// StopCommand 启动内核
+func (g *AppService) StopCommand() response.ResInfo {
 	if singBox != nil && singBox.Process != nil {
 		// 停止进程
-		err := singBox.Process.Signal(syscall.SIGKILL)
-		if err != nil {
-			fmt.Printf("Error stopping command: %v\n", err)
-			return
-		}
-		// Wait for the process to exit gracefully
-		if err = singBox.Wait(); err != nil {
-			slog.Error("Error waiting for command to stop", "error", err)
-			return
-		}
-
+		_ = singBox.Process.Signal(syscall.SIGKILL)
 		singBox = nil
-		slog.Info("Stopped command")
+		return response.Success("内核已停止")
 	}
+	return response.Error("内核未启动")
 }
 
 // GetVersion 获取内核版本
-func (g *AppService) GetVersion() string {
+func (g *AppService) GetVersion() response.ResInfo {
 	clash := utils.NewClashClient()
-	return clash.GetVersion()
+	version, err := clash.GetVersion()
+	if err != nil {
+		return response.Error("内核未启动")
+	}
+	return response.Success(version)
 }
 
 // ListenKernelInfo 监听日志
@@ -208,21 +207,23 @@ func (g *AppService) RestartCommand() {
 }
 
 // SetAutoStart 设置开机自启
-func (g *AppService) SetAutoStart() {
+func (g *AppService) SetAutoStart() response.ResInfo {
 	// 获取当前系统类型
 	task := utils.NewTaskUtils()
 	if err := task.CreateTask(); err != nil {
 		slog.Error("Failed to create task", "error", err)
-		return
+		return response.Error("Failed to create task")
 	}
+	return response.Success("设置成功")
 }
 
 // RemoveAutoStart 移除开机自启
-func (g *AppService) RemoveAutoStart() {
+func (g *AppService) RemoveAutoStart() response.ResInfo {
 	// 获取当前系统类型
 	task := utils.NewTaskUtils()
 	if err := task.DeleteTask(); err != nil {
 		slog.Error("Failed to delete task", "error", err)
-		return
+		return response.Error("Failed to delete task")
 	}
+	return response.Success("移除成功")
 }

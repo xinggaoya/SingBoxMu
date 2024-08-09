@@ -13,4 +13,12 @@
         </asmv3:windowsSettings>
     </asmv3:application>
 
+ // 以管理员身份运行
+        <trustInfo xmlns="urn:schemas-microsoft-com:asm.v3">
+            <security>
+                <requestedPrivileges>
+                    <requestedExecutionLevel level="requireAdministrator" />
+                </requestedPrivileges>
+            </security>
+        </trustInfo>
 </assembly>

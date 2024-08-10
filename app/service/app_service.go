@@ -48,14 +48,17 @@ func (g *AppService) DownloadLatestKernel() response.ResInfo {
 
 	for _, info := range releases.Assets {
 		if strings.Contains(info.Name, system) {
-			fileName := fmt.Sprintf("./sing-box/%s", info.Name)
+			appUtils := utils.NewAppUtils()
+			fileName, _ := appUtils.GetAppDir("sing-box", info.Name)
 			err = utils.DownloadFile(info.BrowserDownloadUrl, fileName)
 			if err != nil {
 				slog.Error("Failed to download latest kernel version", "error", err)
 				return response.Error("下载最新内核版本失败")
 			}
 			// 解压
-			err = utils.Unzip(fileName, "./sing-box")
+			exePath, _ := appUtils.GetAppDir("sing-box")
+
+			err = utils.Unzip(fileName, exePath)
 			if err != nil {
 				slog.Error("Failed to unzip latest kernel version", "error", err)
 				return response.Error("解压最新内核版本失败")
@@ -110,7 +113,11 @@ func (g *AppService) DownloadSubscription(url string) response.ResInfo {
 
 	// json转字符
 	data, err := json.Marshal(inInfo)
-	err = os.WriteFile("./sing-box/config.json", data, 0644)
+
+	appUtils := utils.NewAppUtils()
+	config, _ := appUtils.GetAppDir("sing-box", "config.json")
+
+	err = os.WriteFile(config, data, 0644)
 	if err != nil {
 		slog.Error("Failed to write config", "error", err)
 		return response.Error("写入配置失败")
@@ -146,7 +153,10 @@ func (g *AppService) ChangeProxyMode(mode string) response.ResInfo {
 
 // StartCommand 启动内核
 func (g *AppService) StartCommand() response.ResInfo {
-	cmd := exec.Command("./sing-box/sing-box", "run", "-D", "./sing-box")
+	appUtils := utils.NewAppUtils()
+	exePath, _ := appUtils.GetAppDir("sing-box", "sing-box")
+	wordPath, _ := appUtils.GetAppDir("sing-box")
+	cmd := exec.Command(exePath, "run", "-D", wordPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 

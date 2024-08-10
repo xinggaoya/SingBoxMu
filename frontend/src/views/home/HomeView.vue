@@ -76,6 +76,10 @@ function downloadTheKernel() {
 }
 
 function startSingBox() {
+  if (!appStore.proxyMode) {
+    message.error("请选择代理模式")
+    return
+  }
   AppService.StartCommand().then((res) => {
     if (res.code === 10000) {
       appStore.isRunning = true
@@ -94,6 +98,7 @@ function stopSingBox() {
   AppService.StopCommand().then((res) => {
     if (res.code === 10000) {
       appStore.isRunning = false
+      events.memory.inuse = 0
       message.success("停止成功")
     } else {
       message.error(res.msg)

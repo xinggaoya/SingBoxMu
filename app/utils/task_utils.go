@@ -30,6 +30,7 @@ func (t *TaskUtils) CreateTask() error {
 		return fmt.Errorf("error getting executable path: %v", err)
 	}
 	exePath, err = filepath.Abs(exePath)
+	exePath = fmt.Sprintf(`"%s" -hide`, exePath)
 	if err != nil {
 		return fmt.Errorf("error getting absolute path: %v", err)
 	}

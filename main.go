@@ -6,6 +6,7 @@ import (
 	_ "embed"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"log"
+	"os"
 )
 
 // Wails uses Go's `embed` package to embed the frontend files into the binary.
@@ -78,6 +79,15 @@ func main() {
 			win.Show()
 		}
 	})
+
+	// 如果执行参数为-hide
+	if len(os.Args) > 1 {
+		strings := os.Args[1:]
+		// 如果包含字符
+		if strings[0] == "-hide" {
+			win.Hide()
+		}
+	}
 
 	// Run the application. This blocks until the application has been exited.
 	err = app.Run()

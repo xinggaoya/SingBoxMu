@@ -7,7 +7,6 @@ import (
 	"log/slog"
 	"os"
 	"os/exec"
-	"path/filepath"
 	"syscall"
 )
 
@@ -23,32 +22,30 @@ func NewTaskUtils() *TaskUtils {
 }
 
 func (t *TaskUtils) CreateTask() error {
-
 	// Get the executable path of the current program
 	exePath, err := os.Executable()
 	if err != nil {
 		return fmt.Errorf("error getting executable path: %v", err)
 	}
-	exePath, err = filepath.Abs(exePath)
-	exePath = fmt.Sprintf(`"%s" -hide`, exePath)
-	if err != nil {
-		return fmt.Errorf("error getting absolute path: %v", err)
-	}
 
-	// Ensure the executable path is correctly quoted
-	createTaskCmd := fmt.Sprintf(`schtasks /create /tn %s /tr %s /sc onlogon /rl HIGHEST`, consts.TaskName, exePath)
-	cmd := exec.Command("cmd", "/C", createTaskCmd)
+	// Create the scheduled task using exec.Command with separated arguments
+	cmd := exec.Command("schtasks", "/create",
+		"/tn", consts.TaskName,
+		"/tr", fmt.Sprintf(`"%s" -hide`, exePath),
+		"/sc", "onlogon",
+		"/rl", "HIGHEST")
+
 	cmd.SysProcAttr = &syscall.SysProcAttr{
 		HideWindow: true,
 	}
 
-	// Run the command
-	output, err := cmd.CombinedOutput()
+	err = cmd.Start()
 	if err != nil {
-		return fmt.Errorf("error creating task: %v, output: %s", err, output)
+		slog.Error("Error creating task", "error", err)
+		return fmt.Errorf("error creating task: %v", err)
 	}
 
-	slog.Info("Task created successfully with highest privileges")
+	slog.Info("Task created successfully")
 	return nil
 }
 

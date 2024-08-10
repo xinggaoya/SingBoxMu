@@ -48,10 +48,11 @@ const songs = ref([
 ])
 
 onMounted(() => {
-  appStore.getKernelVersion()
-  if (config.form.autoRun && !appStore.isRunning) {
-    startSingBox()
-  }
+  appStore.getKernelVersion().then(()=>{
+    if (config.form.autoRun && !appStore.isRunning) {
+      startSingBox()
+    }
+  })
 })
 
 // 切换代理模式

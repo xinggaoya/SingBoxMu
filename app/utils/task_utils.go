@@ -47,7 +47,7 @@ func (t *TaskUtils) CreateTask() error {
 		return fmt.Errorf("error creating task: %v, output: %s", err, output)
 	}
 
-	fmt.Println("Task created successfully with highest privileges")
+	slog.Info("Task created successfully with highest privileges")
 	return nil
 }
 

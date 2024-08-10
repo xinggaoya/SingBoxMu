@@ -1,4 +1,4 @@
-# Welcome to Your New Wails3 Project!
+# 欢迎使用 sing-box GUI 项目
 
 Congratulations on generating your Wails3 application! This README will guide you through the next steps to get your project up and running.
 

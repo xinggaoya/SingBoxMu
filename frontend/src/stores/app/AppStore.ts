@@ -27,15 +27,18 @@ export const useAppStore = defineStore('app', () => {
     const events = useEventsStore()
 
     // 获取版本
-    function getKernelVersion() {
-        AppService.GetVersion().then((res) => {
-            if (res.code === 10000) {
-                isRunning.value = true
-                kernelVersion.value = JSON.parse(res.data)
-                events.listen()
-            } else {
-                isRunning.value = false
-            }
+    function getKernelVersion():Promise<void> {
+        return new Promise((resolve) => {
+            AppService.GetVersion().then((res) => {
+                if (res.code === 10000) {
+                    isRunning.value = true
+                    kernelVersion.value = JSON.parse(res.data)
+                    events.listen()
+                } else {
+                    isRunning.value = false
+                }
+                resolve()
+            })
         })
     }
 

@@ -139,12 +139,17 @@ func (g *AppService) ChangeProxyMode(mode string) response.ResInfo {
 		return response.Success("设置成功")
 	} else if mode == "tun" {
 		err := utils.SetTun()
+		appUtils := utils.NewAppUtils()
 		if err != nil {
 			slog.Error("Failed to set tun", "error", err)
 			return response.Error("Failed to set tun")
 		}
 		if singBox != nil && singBox.Process != nil {
 			g.RestartCommand()
+			// 仅支持windows
+			if runtime.GOOS == "windows" {
+				appUtils.SetSystemProxy("", false)
+			}
 		}
 		return response.Success("设置成功")
 	}
@@ -185,6 +190,10 @@ func (g *AppService) StopCommand() response.ResInfo {
 		// 停止进程
 		_ = singBox.Process.Signal(syscall.SIGKILL)
 		singBox = nil
+		// 仅支持windows
+		if runtime.GOOS == "windows" {
+			utils.NewAppUtils().SetSystemProxy("", false)
+		}
 		return response.Success("内核已停止")
 	}
 	return response.Error("内核未启动")

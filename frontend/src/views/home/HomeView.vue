@@ -28,8 +28,8 @@ import {AppService} from '@api/changeme/app/service'
 import {onMounted, ref} from "vue";
 import {useMessage} from 'naive-ui'
 import ChartView from "@/views/home/components/ChartView.vue";
-import useAppStore from "@/stores/app/AppStore.ts";
-import {useEventsStore} from "@/stores/events/EventsStore.ts";
+import useAppStore from "@/stores/app/AppStore";
+import {useEventsStore} from "@/stores/events/EventsStore";
 import {useConfigStore} from "@/stores/config/ConfigStore";
 
 const message = useMessage()

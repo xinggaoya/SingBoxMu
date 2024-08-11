@@ -15,7 +15,7 @@ import {
 } from "echarts/components";
 import VChart, { THEME_KEY } from "vue-echarts";
 import {provide, ref, watch} from "vue";
-import {useEventsStore} from "@/stores/events/EventsStore.ts";
+import {useEventsStore} from "@/stores/events/EventsStore";
 
 use([
   CanvasRenderer,

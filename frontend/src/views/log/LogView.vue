@@ -14,7 +14,7 @@
 <script setup lang="ts">
 import {onBeforeUnmount} from "vue";
 import {Events} from "@wailsio/runtime";
-import {useEventsStore} from "@/stores/events/EventsStore.ts";
+import {useEventsStore} from "@/stores/events/EventsStore";
 
 const events = useEventsStore()
 

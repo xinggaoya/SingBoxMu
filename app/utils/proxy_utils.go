@@ -13,9 +13,13 @@ import (
 
 // updateConfig 更新配置文件
 func updateConfig(config *model.SingBoxConfig) error {
-
+	appUtils := NewAppUtils()
+	wordPath, err := appUtils.GetAppDir("sing-box", "config.json")
+	if err != nil {
+		return err
+	}
 	// 写入新的配置
-	file, err := os.OpenFile("./sing-box/config.json", os.O_WRONLY|os.O_TRUNC, 0644)
+	file, err := os.OpenFile(wordPath, os.O_WRONLY|os.O_TRUNC, 0644)
 	if err != nil {
 		return err
 	}
@@ -33,7 +37,9 @@ func updateConfig(config *model.SingBoxConfig) error {
 func SetProxy() error {
 	var config model.SingBoxConfig
 
-	content, err := os.ReadFile("./sing-box/config.json")
+	appUtils := NewAppUtils()
+	wordPath, err := appUtils.GetAppDir("sing-box", "config.json")
+	content, err := os.ReadFile(wordPath)
 	if err != nil {
 		return err
 	}
@@ -60,7 +66,9 @@ func SetProxy() error {
 func SetTun() error {
 	var config model.SingBoxConfig
 
-	content, err := os.ReadFile("./sing-box/config.json")
+	appUtils := NewAppUtils()
+	wordPath, err := appUtils.GetAppDir("sing-box", "config.json")
+	content, err := os.ReadFile(wordPath)
 	if err != nil {
 		return err
 	}

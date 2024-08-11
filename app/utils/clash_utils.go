@@ -121,14 +121,14 @@ func (c *ClashClient) GetTraffic() {
 
 // GetMemory 获取使用内存
 func (c *ClashClient) GetMemory() {
-	request, err := c.DoRequest("GET", "/memory", nil)
+	request, err := c.DoRequest("GET", "", nil)
 	if err != nil {
 		slog.Error("获取内存信息失败", "err", err)
 		return
 	}
 	defer request.Body.Close()
 	if request.StatusCode != http.StatusOK {
-		slog.Error("获取内存信息失败", "status", request.Status)
+		slog.Error("获取内存信息失败", request.Status)
 		return
 	}
 

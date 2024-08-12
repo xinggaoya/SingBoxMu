@@ -13,6 +13,8 @@ interface kernelVersionConfig {
 export const useAppStore = defineStore('app', () => {
     // 运行状态
     const isRunning = ref<boolean>(false)
+    // 运行模式
+    const isAdminRun = ref<boolean>(false)
     // 内核版本
     const kernelVersion = ref<kernelVersionConfig>({
         meta: '',
@@ -52,7 +54,8 @@ export const useAppStore = defineStore('app', () => {
         isDark,
         toggleDark,
         kernelVersion,
-        getKernelVersion
+        getKernelVersion,
+        isAdminRun,
     }
 }, {
     persist: true,

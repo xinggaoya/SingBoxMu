@@ -228,8 +228,8 @@ func (g *AppService) RestartCommand() {
 // SetAutoStart 设置开机自启
 func (g *AppService) SetAutoStart() response.ResInfo {
 	// 获取当前系统类型
-	task := utils.NewTaskUtils()
-	if err := task.CreateTask(); err != nil {
+	task := utils.NewAppUtils()
+	if err := task.RegisterStartup(); err != nil {
 		slog.Error("Failed to create task", "error", err)
 		return response.Error("Failed to create task")
 	}
@@ -239,10 +239,35 @@ func (g *AppService) SetAutoStart() response.ResInfo {
 // RemoveAutoStart 移除开机自启
 func (g *AppService) RemoveAutoStart() response.ResInfo {
 	// 获取当前系统类型
-	task := utils.NewTaskUtils()
-	if err := task.DeleteTask(); err != nil {
+	task := utils.NewAppUtils()
+	if err := task.UnregisterStartup(); err != nil {
 		slog.Error("Failed to delete task", "error", err)
 		return response.Error("Failed to delete task")
 	}
 	return response.Success("移除成功")
+}
+
+// IsRunningAsAdmin 获取是否是管理员运行
+func (g *AppService) IsRunningAsAdmin() response.ResInfo {
+	appUtils := utils.NewAppUtils()
+	if appUtils.IsRunningAsAdmin() {
+		return response.Success("是管理员运行")
+	}
+	return response.Error("不是管理员运行")
+}
+
+// RestartAsAdmin 以管理员重启
+func (g *AppService) RestartAsAdmin() response.ResInfo {
+	appUtils := utils.NewAppUtils()
+	if !appUtils.IsRunningAsAdmin() {
+		if singBox != nil && singBox.Process != nil {
+			g.StopCommand()
+		}
+		err := appUtils.RunAsAdmin()
+		if err != nil {
+			return response.Error("以管理员权限重启失败")
+		}
+		return response.Success("以管理员权限重启成功")
+	}
+	return response.Success("已经是管理员运行")
 }

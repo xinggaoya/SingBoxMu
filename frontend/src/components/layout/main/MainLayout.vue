@@ -21,9 +21,24 @@
 </template>
 
 <script lang="ts" setup>
-
 import LayoutMenu from "@/components/layout/menu/LayoutMenu.vue";
 import HeaderLayout from "@/components/layout/header/HeaderLayout.vue";
+import {useAppStore} from "@/stores/app/AppStore";
+import {AppService} from "@api/changeme/app/service";
+import {onMounted} from "vue";
+
+const appStore = useAppStore()
+
+onMounted(() => {
+  getAppRunStatus()
+})
+
+// 获取程序运行状态
+function getAppRunStatus() {
+  AppService.IsRunningAsAdmin().then((res) => {
+    appStore.isAdminRun = res.code === 10000;
+  })
+}
 </script>
 
 <style scoped>

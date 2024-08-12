@@ -4,7 +4,7 @@ vars:
   APP_NAME: "SingBoxMu"
   BIN_DIR: "bin"
   VITE_PORT: '{{.WAILS_VITE_PORT | default 9245}}'
-  PRODUCTION: "true"
+  PRODUCTION: "false"
 tasks:
 
   ## -------------------------- Build -------------------------- ##
@@ -37,7 +37,7 @@ tasks:
     cmds:
       - go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/SingBoxMu.exe
     vars:
-      BUILD_FLAGS: '{{if eq .PRODUCTION "true"}}-tags production -trimpath -ldflags="-w -s -H windowsgui"{{else}}-gcflags=all="-l"{{end}}'
+      BUILD_FLAGS: '{{if eq .PRODUCTION "true"}}-tags production -trimpath -ldflags="-w -s -H windowsgui"{{else}}-ldflags="-w -s -H windowsgui"{{end}}'
     env:
       GOOS: windows
       CGO_ENABLED: 0

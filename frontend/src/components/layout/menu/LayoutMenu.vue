@@ -10,6 +10,14 @@
     </n-card>
     <n-card style="margin-top: 5px">
       <n-flex vertical>
+        <n-flex>
+          <n-tag type="info" v-if="appStore.isAdminRun">启动模式：管理员模式</n-tag>
+          <n-tag type="info" v-else>启动模式：普通模式</n-tag>
+        </n-flex>
+        <div>
+          <n-tag type="success" v-if="appStore.isRunning">运行状态：运行中</n-tag>
+          <n-tag type="info" v-else>运行状态：未运行</n-tag>
+        </div>
         <n-tag type="primary">
           <span>使用内存：{{ events.memory.inuse }}Mb</span>
         </n-tag>
@@ -30,10 +38,13 @@ import {useRouter} from 'vue-router'
 import {NIcon} from 'naive-ui'
 import {AtCircleOutline, BarChartOutline, InformationCircleOutline, SettingsOutline} from '@vicons/ionicons5'
 import {useEventsStore} from "@/stores/events/EventsStore.ts";
+import useAppStore from "@/stores/app/AppStore";
+
 
 const router = useRouter()
 const currentMenu = ref(0)
 const events = useEventsStore()
+const appStore = useAppStore()
 // 总流量
 const totalUseTraffic = computed(() => {
   return events.totalUseTraffic.toFixed(2)

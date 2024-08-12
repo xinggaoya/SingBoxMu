@@ -8,10 +8,12 @@
               :key="song.value"
               :value="song.value"
               :label="song.label"
+              :disabled="song.disabled"
           />
         </n-radio-group>
         <n-flex>
-          <n-button type="primary" ghost @click="downloadTheKernel">下载内核</n-button>
+          <n-button type="primary" size="small" ghost @click="downloadTheKernel">下载内核</n-button>
+          <n-button type="primary" size="small" ghost @click="restartAdminSingBox">以管理员重启</n-button>
           <n-button type="primary" @click="startSingBox" :disabled="appStore.isRunning">启动</n-button>
           <n-button type="error" @click="stopSingBox" :disabled="!appStore.isRunning">停止</n-button>
         </n-flex>
@@ -39,17 +41,23 @@ const events = useEventsStore()
 const songs = ref([
   {
     value: 'system',
-    label: '系统代理'
+    label: '系统代理',
+    disabled: false
   },
   {
     value: 'tun',
-    label: 'Tun'
+    label: 'Tun',
+    disabled: true
   }
 ])
 
 onMounted(() => {
-  appStore.getKernelVersion().then(()=>{
+  appStore.getKernelVersion().then(() => {
     if (config.form.autoRun && !appStore.isRunning) {
+      if (!appStore.isAdminRun) {
+        changeProxyMode('system')
+        songs.value[1].disabled = true
+      }
       startSingBox()
     }
   })
@@ -57,6 +65,11 @@ onMounted(() => {
 
 // 切换代理模式
 function changeProxyMode(mode: string) {
+  if (mode === 'tun' && !appStore.isAdminRun) {
+    appStore.proxyMode = 'system'
+    message.error("请以管理员权限运行")
+    return
+  }
   AppService.ChangeProxyMode(mode).then((res) => {
     if (res.code === 10000) {
       message.success("切换成功")
@@ -70,6 +83,16 @@ function downloadTheKernel() {
   AppService.DownloadLatestKernel().then((res) => {
     if (res.code === 10000) {
       message.success("下载完成")
+    } else {
+      message.error(res.msg)
+    }
+  })
+}
+
+function restartAdminSingBox() {
+  AppService.RestartAsAdmin().then((res) => {
+    if (res.code === 10000) {
+      message.success("重启成功")
     } else {
       message.error(res.msg)
     }

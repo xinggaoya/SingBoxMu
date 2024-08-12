@@ -1,9 +1,13 @@
 package utils
 
 import (
+	"changeme/app/consts"
+	"fmt"
 	"golang.org/x/sys/windows/registry"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"syscall"
 )
 
 /**
@@ -56,5 +60,68 @@ func (g *AppUtils) SetSystemProxy(proxyAddress string, enable bool) error {
 		return err
 	}
 
+	return nil
+}
+
+// IsRunningAsAdmin 检查是否具有管理员权限
+func (g *AppUtils) IsRunningAsAdmin() bool {
+	_, err := os.Open("\\\\.\\PHYSICALDRIVE0")
+	return err == nil
+}
+
+// RunAsAdmin 以管理员权限重新启动程序
+func (g *AppUtils) RunAsAdmin() error {
+	exe, err := os.Executable()
+	if err != nil {
+		return err
+	}
+
+	cmd := exec.Command("powershell", "Start-Process", exe, "-Verb", "runAs")
+	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
+
+	err = cmd.Start()
+	if err != nil {
+		return err
+	}
+	cmd.Wait()
+
+	os.Exit(0)
+	return nil
+}
+
+// RegisterStartup 注册开机自启
+func (g *AppUtils) RegisterStartup() error {
+	key, _, err := registry.CreateKey(registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Run`, registry.ALL_ACCESS)
+	if err != nil {
+		return err
+	}
+	defer key.Close()
+
+	exe, err := os.Executable()
+
+	exe = fmt.Sprintf("%s %s", exe, "-hide")
+	if err != nil {
+		return err
+	}
+
+	err = key.SetStringValue(consts.TaskName, exe)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// UnregisterStartup 取消开机自启
+func (g *AppUtils) UnregisterStartup() error {
+	key, _, err := registry.CreateKey(registry.CURRENT_USER, `Software\Microsoft\Windows\CurrentVersion\Run`, registry.ALL_ACCESS)
+	if err != nil {
+		return err
+	}
+	defer key.Close()
+
+	err = key.DeleteValue(consts.TaskName)
+	if err != nil {
+		return err
+	}
 	return nil
 }

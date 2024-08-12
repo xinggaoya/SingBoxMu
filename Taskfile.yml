@@ -23,6 +23,11 @@ tasks:
 
   ## ------> Windows <-------
 
+  package:app:
+    dir: ./bin
+    cmds:
+      - NsisTool
+
   build:windows:
     summary: Builds the application for Windows
     deps:
@@ -36,6 +41,8 @@ tasks:
           ARCH: '{{.ARCH}}'
     cmds:
       - go build {{.BUILD_FLAGS}} -o {{.BIN_DIR}}/SingBoxMu.exe
+      # 进入bin 文件夹下执行 NsisTool
+      - task: package:app
     vars:
       BUILD_FLAGS: '{{if eq .PRODUCTION "true"}}-tags production -trimpath -ldflags="-w -s -H windowsgui"{{else}}-ldflags="-w -s -H windowsgui"{{end}}'
     env:

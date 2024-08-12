@@ -184,7 +184,7 @@ func (g *AppService) StartCommand() response.ResInfo {
 	return response.Success("内核已启动")
 }
 
-// StopCommand 启动内核
+// StopCommand 停止内核
 func (g *AppService) StopCommand() response.ResInfo {
 	if singBox != nil && singBox.Process != nil {
 		// 停止进程

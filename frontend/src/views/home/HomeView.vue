@@ -4,16 +4,18 @@
       <n-flex justify="space-between">
         <n-radio-group v-model:value="appStore.proxyMode" @update-value="changeProxyMode">
           <n-radio-button
-              v-for="song in songs"
-              :key="song.value"
-              :value="song.value"
-              :label="song.label"
-              :disabled="song.disabled"
+              value="system"
+              label="系统代理"
+          />
+          <n-radio-button
+              value="tun"
+              label="Tun"
+              :disabled="!appStore.isAdminRun"
           />
         </n-radio-group>
         <n-flex>
           <n-button type="primary" size="small" ghost @click="downloadTheKernel">下载内核</n-button>
-          <n-button type="primary" size="small" ghost @click="restartAdminSingBox">以管理员重启</n-button>
+          <n-button type="primary" size="small" v-if="!appStore.isAdminRun" ghost @click="restartAdminSingBox">以管理员重启</n-button>
           <n-button type="primary" @click="startSingBox" :disabled="appStore.isRunning">启动</n-button>
           <n-button type="error" @click="stopSingBox" :disabled="!appStore.isRunning">停止</n-button>
         </n-flex>
@@ -27,7 +29,7 @@
 
 <script setup lang="ts">
 import {AppService} from '@api/changeme/app/service'
-import {onMounted, ref} from "vue";
+import {onMounted} from "vue";
 import {useMessage} from 'naive-ui'
 import ChartView from "@/views/home/components/ChartView.vue";
 import useAppStore from "@/stores/app/AppStore";
@@ -38,25 +40,12 @@ const message = useMessage()
 const appStore = useAppStore()
 const config = useConfigStore()
 const events = useEventsStore()
-const songs = ref([
-  {
-    value: 'system',
-    label: '系统代理',
-    disabled: false
-  },
-  {
-    value: 'tun',
-    label: 'Tun',
-    disabled: true
-  }
-])
 
 onMounted(() => {
   appStore.getKernelVersion().then(() => {
     if (config.form.autoRun && !appStore.isRunning) {
       if (!appStore.isAdminRun) {
         changeProxyMode('system')
-        songs.value[1].disabled = true
       }
       startSingBox()
     }
@@ -111,7 +100,7 @@ function startSingBox() {
       // 延迟5s
       setTimeout(() => {
         events.listen()
-      }, 5000)
+      }, 6000)
     } else {
       message.error(res.msg)
     }

@@ -11,8 +11,8 @@
     <n-card style="margin-top: 5px">
       <n-flex vertical>
         <n-flex>
-          <n-tag type="info" v-if="appStore.isAdminRun">启动模式：管理员模式</n-tag>
-          <n-tag type="info" v-else>启动模式：普通模式</n-tag>
+          <n-tag type="info" v-if="appStore.isAdminRun">启动模式：管理员</n-tag>
+          <n-tag type="info" v-else>启动模式：普通</n-tag>
         </n-flex>
         <div>
           <n-tag type="success" v-if="appStore.isRunning">运行状态：运行中</n-tag>
@@ -37,7 +37,7 @@ import {computed, h, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {NIcon} from 'naive-ui'
 import {AtCircleOutline, BarChartOutline, InformationCircleOutline, SettingsOutline} from '@vicons/ionicons5'
-import {useEventsStore} from "@/stores/events/EventsStore.ts";
+import {useEventsStore} from "@/stores/events/EventsStore";
 import useAppStore from "@/stores/app/AppStore";
 
 

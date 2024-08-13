@@ -99,10 +99,7 @@ function startSingBox() {
     if (res.code === 10000) {
       appStore.isRunning = true
       message.success("运行成功")
-      // 延迟5s
-      setTimeout(() => {
-        events.listen()
-      }, 6000)
+      events.listen()
     } else {
       message.error(res.msg)
     }

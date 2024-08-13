@@ -14,7 +14,6 @@ import (
 	"runtime"
 	"strings"
 	"syscall"
-	"time"
 )
 
 type AppService struct{}
@@ -179,7 +178,7 @@ func (g *AppService) StartCommand() response.ResInfo {
 	slog.Info("Started command with PID %d\n", cmd.Process.Pid)
 	singBox = cmd
 
-	go ListenKernelInfo()
+	ListenKernelInfo()
 
 	return response.Success("内核已启动")
 }
@@ -211,8 +210,6 @@ func (g *AppService) GetVersion() response.ResInfo {
 
 // ListenKernelInfo 监听日志
 func ListenKernelInfo() {
-	// 延迟10s
-	time.Sleep(5 * time.Second)
 	clash := utils.NewClashClient()
 	go clash.GetLogs()
 	go clash.GetMemory()

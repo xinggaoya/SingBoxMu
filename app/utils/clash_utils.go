@@ -10,6 +10,7 @@ import (
 	"io"
 	"log/slog"
 	"net/http"
+	"time"
 )
 
 /**
@@ -63,6 +64,9 @@ func (c *ClashClient) GetLogs() {
 	// 检查响应状态码是否为成功
 	if request.StatusCode != http.StatusOK {
 		slog.Error("获取日志信息失败", "status", request.Status)
+		// 重试
+		time.Sleep(1 * time.Second)
+		c.GetLogs()
 		return
 	}
 
@@ -82,7 +86,6 @@ func (c *ClashClient) GetLogs() {
 			Data: line,
 		})
 	}
-
 }
 
 // GetTraffic 获取流量信息
@@ -95,6 +98,8 @@ func (c *ClashClient) GetTraffic() {
 	defer request.Body.Close()
 	if request.StatusCode != http.StatusOK {
 		slog.Error("获取流量信息失败", "status", request.Status)
+		time.Sleep(1 * time.Second)
+		c.GetTraffic()
 		return
 	}
 
@@ -126,6 +131,8 @@ func (c *ClashClient) GetMemory() {
 	defer request.Body.Close()
 	if request.StatusCode != http.StatusOK {
 		slog.Error("获取内存信息失败", request.Status)
+		time.Sleep(1 * time.Second)
+		c.GetMemory()
 		return
 	}
 

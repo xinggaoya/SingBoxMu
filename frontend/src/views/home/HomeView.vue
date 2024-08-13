@@ -15,7 +15,9 @@
         </n-radio-group>
         <n-flex>
           <n-button type="primary" size="small" ghost @click="downloadTheKernel">下载内核</n-button>
-          <n-button type="primary" size="small" v-if="!appStore.isAdminRun" ghost @click="restartAdminSingBox">以管理员重启</n-button>
+          <n-button type="primary" size="small" v-if="!appStore.isAdminRun" ghost @click="restartAdminSingBox">
+            以管理员重启
+          </n-button>
           <n-button type="primary" @click="startSingBox" :disabled="appStore.isRunning">启动</n-button>
           <n-button type="error" @click="stopSingBox" :disabled="!appStore.isRunning">停止</n-button>
         </n-flex>
@@ -44,7 +46,7 @@ const events = useEventsStore()
 onMounted(() => {
   appStore.getKernelVersion().then(() => {
     if (config.form.autoRun && !appStore.isRunning) {
-      if (!appStore.isAdminRun) {
+      if (!appStore.isAdminRun && appStore.proxyMode === 'tun') {
         changeProxyMode('system')
       }
       startSingBox()

@@ -27,7 +27,6 @@ const version = ref<any>()
 
 onMounted(() => {
   AppService.GetVersion().then((res: any) => {
-    console.log(res.data)
     const date = JSON.parse(res.data)
     if (date) {
       version.value = date.version

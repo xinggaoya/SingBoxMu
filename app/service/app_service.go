@@ -190,7 +190,7 @@ func (g *AppService) StopCommand() response.ResInfo {
 		// 停止进程
 		_ = singBox.Process.Signal(syscall.SIGKILL)
 		singBox = nil
-		// 仅支持windows
+		// 清理代理 仅支持windows
 		if runtime.GOOS == "windows" {
 			utils.NewAppUtils().SetSystemProxy("", false)
 		}

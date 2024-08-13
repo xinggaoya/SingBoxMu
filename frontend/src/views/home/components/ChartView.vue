@@ -1,20 +1,14 @@
 <template>
-  <v-chart class="chart" :option="option" />
+  <v-chart class="chart" :option="option"/>
 </template>
 
 <script lang="ts" setup>
-import { use } from "echarts/core";
-import { CanvasRenderer } from "echarts/renderers";
-import { LineChart } from "echarts/charts";
-import {
-  GridComponent,
-  LegendComponent,
-  TitleComponent,
-  ToolboxComponent,
-  TooltipComponent
-} from "echarts/components";
-import VChart, { THEME_KEY } from "vue-echarts";
-import {provide, ref, watch} from "vue";
+import {use} from "echarts/core";
+import {CanvasRenderer} from "echarts/renderers";
+import {LineChart} from "echarts/charts";
+import {GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent} from "echarts/components";
+import VChart, {THEME_KEY} from "vue-echarts";
+import {onMounted, provide, ref, watch} from "vue";
 import {useEventsStore} from "@/stores/events/EventsStore";
 
 use([
@@ -31,7 +25,7 @@ provide(THEME_KEY, "light");
 
 const option = ref<any>({
   title: {
-    text: "实时流量 (最近1分钟)"
+    text: "实时流量"
   },
   tooltip: {
     trigger: "axis",
@@ -83,32 +77,32 @@ const option = ref<any>({
   ]
 });
 
-const MAX_DATA_POINTS = 6; // 限制数据点数量
+
 const events = useEventsStore()
 
-watch(events.traffic, (value)=>{
-  handleTrafficData(value)
-},{
-  deep: true
+onMounted(()=>{
+  setInterval(()=>{
+    handleTrafficData(events.traffic)
+  }, 1000)
 })
 
-
-function handleTrafficData(data:any) {
-  const { up, down } = data;
+function handleTrafficData(data: any) {
+  const {up, down} = data;
   updateData(up, down);
 }
 
 function updateData(up: number, down: number) {
   const now = Date.now();
 
-  if (option.value.series[0].data.length >= MAX_DATA_POINTS) {
-    // 移除旧的数据点
-    option.value.series[0].data.shift();
-  }
-
   // 更新数据
   option.value.series[0].data.push([now, up]);
   option.value.series[1].data.push([now, down]);
+
+  // 移除过期数据
+  if (option.value.series[0].data.length > 8) {
+    option.value.series[0].data.shift();
+    option.value.series[1].data.shift();
+  }
 }
 
 </script>

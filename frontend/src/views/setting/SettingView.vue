@@ -1,7 +1,7 @@
 <template>
-  <n-card title="Setting" style="height: 100%" content-style="height: 100%;">
+  <n-card  style="height: 100%" content-style="height: 100%;">
     <n-scrollbar>
-      <n-divider>系统</n-divider>
+      <n-divider>内核版本 {{version}}</n-divider>
       <n-form :model="configStore.form" ref="formRef" label-placement="left">
         <n-form-item label="开机自启" path="autoStart">
           <n-switch v-model:value="configStore.form.autoStart" @update-value="updateAutoStart"/>
@@ -23,10 +23,15 @@ import {useMessage} from "naive-ui";
 const configStore = useConfigStore()
 const formRef = ref()
 const message = useMessage()
+const version = ref<any>()
 
 onMounted(() => {
   AppService.GetVersion().then((res: any) => {
     console.log(res.data)
+    const date = JSON.parse(res.data)
+    if (date) {
+      version.value = date.version
+    }
   })
 })
 

@@ -51,9 +51,10 @@ export const useEventsStore = defineStore('Events', () => {
             })
             Events.On("memory", (data: any) => {
                 const info = JSON.parse(data.data)
+                console.log(info)
                 // 转换为MB 保留小数点后2位
-                info.inuse = (info.inuse / 1024 / 1024).toFixed(2)
-                info.oslimit = (info.oslimit / 1024 / 1024).toFixed(2)
+                info.inuse = (info.inuse / 1024 / 1024)
+                info.oslimit = (info.oslimit / 1024 / 1024)
                 memory.value = info
             })
         }

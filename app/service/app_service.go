@@ -102,13 +102,14 @@ func (g *AppService) DownloadSubscription(url string) response.ResInfo {
 		// 只需要url不为空
 		if item.Server != "" {
 			inInfo.Outbounds = append(inInfo.Outbounds, item)
-			if newInfo.Outbounds == nil {
-				newInfo.Outbounds = append(newInfo.Outbounds, item)
-			}
+			newInfo.Outbounds = append(newInfo.Outbounds, item)
 		}
 	}
-	inInfo.Outbounds[0].Outbounds[1] = newInfo.Outbounds[0].Tag
-	inInfo.Outbounds[1].Outbounds[0] = newInfo.Outbounds[0].Tag
+
+	for _, item := range newInfo.Outbounds {
+		inInfo.Outbounds[0].Outbounds = append(inInfo.Outbounds[0].Outbounds, item.Outbounds...)
+		inInfo.Outbounds[1].Outbounds = append(inInfo.Outbounds[1].Outbounds, item.Outbounds...)
+	}
 
 	// json转字符
 	data, err := json.Marshal(inInfo)

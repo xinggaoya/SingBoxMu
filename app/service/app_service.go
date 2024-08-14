@@ -107,8 +107,8 @@ func (g *AppService) DownloadSubscription(url string) response.ResInfo {
 	}
 
 	for _, item := range newInfo.Outbounds {
-		inInfo.Outbounds[0].Outbounds = append(inInfo.Outbounds[0].Outbounds, item.Outbounds...)
-		inInfo.Outbounds[1].Outbounds = append(inInfo.Outbounds[1].Outbounds, item.Outbounds...)
+		inInfo.Outbounds[0].Outbounds = append(inInfo.Outbounds[0].Outbounds, item.Tag)
+		inInfo.Outbounds[1].Outbounds = append(inInfo.Outbounds[1].Outbounds, item.Tag)
 	}
 
 	// json转字符

@@ -99,11 +99,15 @@ type SingBoxOutbounds struct {
 			Host string `json:"Host,omitempty"`
 		} `json:"headers,omitempty"`
 	} `json:"transport,omitempty"`
-	Tls struct {
-		Enabled  bool `json:"enabled,omitempty"`
-		Insecure bool `json:"insecure,omitempty"`
-	} `json:"tls,omitempty"`
-	Network string `json:"network,omitempty"`
+	Tls         SingBoxInboundsTls `json:"tls,omitempty"`
+	Network     string             `json:"network,omitempty"`
+	TcpFastOpen bool               `json:"tcp_fast_open,omitempty"`
+}
+
+type SingBoxInboundsTls struct {
+	Enabled    bool   `json:"enabled,omitempty"`
+	ServerName string `json:"server_name,omitempty"`
+	Insecure   any    `json:"insecure,omitempty"`
 }
 
 type Inbounds struct {

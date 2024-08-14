@@ -111,6 +111,13 @@ func (g *AppService) DownloadSubscription(url string) response.ResInfo {
 		inInfo.Outbounds[1].Outbounds = append(inInfo.Outbounds[1].Outbounds, item.Tag)
 	}
 
+	// 处理订阅
+	for _, item := range inInfo.Outbounds {
+		if !item.Tls.Enabled {
+			item.Tls = model.SingBoxInboundsTls{}
+		}
+	}
+
 	// json转字符
 	data, err := json.Marshal(inInfo)
 

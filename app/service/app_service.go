@@ -220,16 +220,6 @@ func (g *AppService) StopCommand() response.ResInfo {
 	return response.Error("内核未启动")
 }
 
-// GetVersion 获取内核版本
-func (g *AppService) GetVersion() response.ResInfo {
-	clash := utils.NewClashClient()
-	version, err := clash.GetVersion()
-	if err != nil {
-		return response.Error("内核未启动")
-	}
-	return response.Success(version)
-}
-
 // ListenKernelInfo 监听日志
 func ListenKernelInfo() {
 	clash := utils.NewClashClient()
@@ -289,24 +279,4 @@ func (g *AppService) RestartAsAdmin() response.ResInfo {
 		return response.Success("以管理员权限重启成功")
 	}
 	return response.Success("已经是管理员运行")
-}
-
-// GetProxies 获取所有代理
-func (g *AppService) GetProxies() response.ResInfo {
-	clash := utils.NewClashClient()
-	proxies, err := clash.GetProxies()
-	if err != nil {
-		return response.Error("获取代理失败")
-	}
-	return response.Success(proxies)
-}
-
-// SwitchProxy 更换代理
-func (g *AppService) SwitchProxy(group, name string) response.ResInfo {
-	clash := utils.NewClashClient()
-	err := clash.SwitchProxy(group, name)
-	if err != nil {
-		return response.Error("更换代理失败")
-	}
-	return response.Success("更换代理成功")
 }

@@ -36,7 +36,7 @@
 import {computed, h, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {NIcon} from 'naive-ui'
-import {AtCircleOutline, BarChartOutline, InformationCircleOutline, SettingsOutline} from '@vicons/ionicons5'
+import {AtCircleOutline, BarChartOutline, InformationCircleOutline, SettingsOutline,BalloonOutline} from '@vicons/ionicons5'
 import {useEventsStore} from "@/stores/events/EventsStore";
 import useAppStore from "@/stores/app/AppStore";
 
@@ -61,7 +61,7 @@ const menuOptions = [
     label: '代理',
     key: 1,
     icon: () => {
-      return h(NIcon, null, {default: () => h(AtCircleOutline)})
+      return h(NIcon, null, {default: () => h(BalloonOutline)})
     }
   },
   {

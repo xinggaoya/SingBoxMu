@@ -7,9 +7,9 @@ package response
 
 // ResInfo 定义 HTTP 接口返回结构
 type ResInfo struct {
-	Code int         `json:"code"`
-	Msg  string      `json:"msg"`
-	Data interface{} `json:"data,omitempty"`
+	Code int    `json:"code"`
+	Msg  string `json:"msg"`
+	Data any    `json:"data,omitempty"`
 }
 
 // Success 成功返回

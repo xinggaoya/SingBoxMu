@@ -186,35 +186,25 @@ func (c *ClashClient) ReloadConfig(force bool) error {
 		return err
 	}
 	defer request.Body.Close()
-	if request.StatusCode != http.StatusOK {
-		slog.Error("重载配置失败", "status", request.Status)
-		return err
-	}
+
 	return nil
 }
 
 // GetProxies 获取所有代理
-func (c *ClashClient) GetProxies() (map[string]interface{}, error) {
+func (c *ClashClient) GetProxies() (string, error) {
 	request, err := c.DoRequest("GET", "/proxies", nil)
 	if err != nil {
-		slog.Error("获取代理失败", "err", err)
-		return nil, err
+		fmt.Printf("获取代理失败")
+		return "", err
 	}
 	defer request.Body.Close()
 
 	body, err := io.ReadAll(request.Body)
 	if err != nil {
 		slog.Error("读取代理信息时发生错误", "err", err)
-		return nil, err
+		return "", err
 	}
-	var proxies map[string]interface{}
-	err = json.Unmarshal(body, &proxies)
-
-	if err != nil {
-		slog.Error("解析代理信息时发生错误", "err", err)
-		return nil, err
-	}
-	return proxies, nil
+	return string(body), nil
 }
 
 // SwitchProxy 切换代理
@@ -234,5 +224,21 @@ func (c *ClashClient) SwitchProxy(group, name string) error {
 		return fmt.Errorf("切换代理失败")
 	}
 
+	return nil
+}
+
+// ReloadConfigFile 重新加载配置文件
+func (c *ClashClient) ReloadConfigFile() error {
+	request, err := c.DoRequest("PUT", "/configs/reload", nil)
+	if err != nil {
+		slog.Error("重新加载配置文件失败", "err", err)
+		return err
+	}
+	defer request.Body.Close()
+
+	if request.StatusCode != 204 {
+		slog.Error("重新加载配置文件失败", "status", request.Status)
+		return fmt.Errorf("重新加载配置文件失败")
+	}
 	return nil
 }

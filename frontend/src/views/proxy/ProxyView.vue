@@ -6,11 +6,12 @@
           <n-collapse-item
               v-for="(value,key,index) in proxies"
               :key="index"
-              :title="key" :name="key">
+              :title="key"
+              :name="index">
             <n-flex>
               <n-tag type="primary"
                      class="mr-2"
-                     v-for="(item,i) in value?.all"
+                     v-for="(item,i) in value.all"
                      :key="i"
                      @click="switchProxy(key, item)">
                 {{ item }}
@@ -25,21 +26,22 @@
 </template>
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {AppService} from "@api/changeme/app/service";
+import {ClashService} from "@api/changeme/app/service";
 import {useMessage} from "naive-ui";
 
 const proxies = ref<any>({})
 const message = useMessage()
 
 onMounted(() => {
-  AppService.GetProxies().then(res => {
+  ClashService.GetProxies().then(res => {
     if (res.code === 10000) {
+      const info = JSON.parse(res.data)
+      console.log(info)
       // 循环对象属性
-      Object.keys(res.data.proxies).forEach(key => {
+      Object.keys(info.proxies).forEach(key => {
         // 获取属性值
-        const value = res.data.proxies[key]
-        console.log(key, value)
-        if (value.all?.length > 0) {
+        const value = info.proxies[key]
+        if (value.all.length > 0) {
           proxies.value[key] = value
         }
       })
@@ -48,8 +50,7 @@ onMounted(() => {
 })
 
 function switchProxy(group: any, name: string) {
-  AppService.SwitchProxy(group, name).then(res => {
-    console.log(res)
+  ClashService.SwitchProxy(group, name).then(res => {
     if (res.code === 10000) {
       message.success("切换成功")
     } else {

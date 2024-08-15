@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
-import {AppService} from "@api/changeme/app/service";
+import {ClashService} from "@api/changeme/app/service";
 import {useEventsStore} from "@/stores/events/EventsStore";
 
 
@@ -31,7 +31,7 @@ export const useAppStore = defineStore('app', () => {
     // 获取版本
     function getKernelVersion():Promise<void> {
         return new Promise((resolve) => {
-            AppService.GetVersion().then((res) => {
+            ClashService.GetVersion().then((res) => {
                 if (res.code === 10000) {
                     isRunning.value = true
                     kernelVersion.value = JSON.parse(res.data)

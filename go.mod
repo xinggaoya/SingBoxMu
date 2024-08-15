@@ -3,6 +3,7 @@ module changeme
 go 1.22.4
 
 require (
+	github.com/google/uuid v1.3.0
 	github.com/wailsapp/wails/v3 v3.0.0-alpha.6
 	golang.org/x/sys v0.20.0
 )
@@ -22,7 +23,6 @@ require (
 	github.com/go-ole/go-ole v1.2.6 // indirect
 	github.com/godbus/dbus/v5 v5.1.0 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
-	github.com/google/uuid v1.3.0 // indirect
 	github.com/jbenet/go-context v0.0.0-20150711004518-d14ea06fba99 // indirect
 	github.com/jchv/go-winloader v0.0.0-20210711035445-715c2860da7e // indirect
 	github.com/kevinburke/ssh_config v1.2.0 // indirect

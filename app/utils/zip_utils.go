@@ -20,18 +20,22 @@ func Unzip(src, dest string) error {
 	if err != nil {
 		return fmt.Errorf("failed to open zip file: %w", err)
 	}
+	fmt.Printf("解压zip文件到%s", dest)
 	defer func(r *zip.ReadCloser) {
 		err = r.Close()
 		if err != nil {
 			log.Printf("关闭zip文件失败: %v", err)
+			return
 		}
 		// 删除zip文件
 		err = os.Remove(src)
 		if err != nil {
 			log.Printf("failed to remove zip file: %v", err)
+			return
 		}
 	}(r)
 
+	fmt.Printf("解压zip文件到12%s", dest)
 	for _, f := range r.File {
 		err = extractAndWriteFile(f, dest)
 		if err != nil {

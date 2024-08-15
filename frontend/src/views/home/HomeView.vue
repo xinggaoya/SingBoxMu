@@ -14,7 +14,6 @@
           />
         </n-radio-group>
         <n-flex>
-          <n-button type="primary" size="small" ghost @click="downloadTheKernel">下载内核</n-button>
           <n-button type="primary" size="small" v-if="!appStore.isAdminRun" ghost @click="restartAdminSingBox">
             以管理员重启
           </n-button>
@@ -70,15 +69,7 @@ function changeProxyMode(mode: string) {
   })
 }
 
-function downloadTheKernel() {
-  AppService.DownloadLatestKernel().then((res) => {
-    if (res.code === 10000) {
-      message.success("下载完成")
-    } else {
-      message.error(res.msg)
-    }
-  })
-}
+
 
 function restartAdminSingBox() {
   AppService.RestartAsAdmin().then((res) => {

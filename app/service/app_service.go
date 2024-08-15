@@ -6,6 +6,7 @@ import (
 	"changeme/app/utils"
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"io"
 	"log/slog"
 	"net/http"
@@ -45,27 +46,38 @@ func (g *AppService) DownloadLatestKernel() response.ResInfo {
 		return response.Error("获取最新内核版本失败")
 	}
 
+	id := uuid.NewString()
+
 	for _, info := range releases.Assets {
 		if strings.Contains(info.Name, system) {
-			appUtils := utils.NewAppUtils()
-			fileName, _ := appUtils.GetAppDir("sing-box", info.Name)
-			err = utils.DownloadFile(info.BrowserDownloadUrl, fileName)
-			if err != nil {
-				slog.Error("Failed to download latest kernel version", "error", err)
-				return response.Error("下载最新内核版本失败")
-			}
-			// 解压
-			exePath, _ := appUtils.GetAppDir("sing-box")
-
-			err = utils.Unzip(fileName, exePath)
-			if err != nil {
-				slog.Error("Failed to unzip latest kernel version", "error", err)
-				return response.Error("解压最新内核版本失败")
-			}
+			go downloadAndDecompressTheKernel(info.BrowserDownloadUrl, info.Name, id)
 			break
 		}
 	}
-	return response.Success("下载最新内核版本成功")
+	return response.Success(id)
+}
+
+// 下载解压内核
+func downloadAndDecompressTheKernel(url, name, id string) {
+	appUtils := utils.NewAppUtils()
+	fileName, _ := appUtils.GetAppDir("sing-box", name)
+	err := utils.DownloadFile(url, fileName, id)
+	if err != nil {
+		slog.Error("Failed to download latest kernel version", "error", err)
+		return
+	}
+	// 解压
+	exePath, err := appUtils.GetAppDir("sing-box")
+	if err != nil {
+		fmt.Printf("Failed to get app dir %v", err)
+		return
+	}
+
+	err = utils.Unzip(fileName, exePath)
+	if err != nil {
+		slog.Error("Failed to unzip latest kernel version", "error", err)
+		return
+	}
 }
 
 // DownloadSubscription 下载订阅
@@ -179,7 +191,9 @@ func (g *AppService) StartCommand() response.ResInfo {
 	err := cmd.Start()
 
 	if err != nil {
-		fmt.Printf("Error starting command: %v\n", err)
+		if strings.Contains(err.Error(), "file not found") {
+			return response.Error("内核未安装，请先安装内核")
+		}
 		return response.Error("Error starting command")
 	}
 

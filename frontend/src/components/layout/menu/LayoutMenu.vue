@@ -58,22 +58,29 @@ const menuOptions = [
     },
   },
   {
-    label: '订阅',
+    label: '代理',
     key: 1,
     icon: () => {
       return h(NIcon, null, {default: () => h(AtCircleOutline)})
     }
   },
   {
-    label: '日志',
+    label: '订阅',
     key: 2,
+    icon: () => {
+      return h(NIcon, null, {default: () => h(AtCircleOutline)})
+    }
+  },
+  {
+    label: '日志',
+    key: 3,
     icon: () => {
       return h(NIcon, null, {default: () => h(InformationCircleOutline)})
     }
   },
   {
     label: '设置',
-    key: 3,
+    key: 4,
     icon: () => {
       return h(NIcon, null, {
         default: () => h(SettingsOutline)
@@ -89,12 +96,15 @@ function onSelect(key: number) {
       router.push('/')
       break
     case 1:
-      router.push('/sub')
+      router.push('/proxy')
       break
     case 2:
-      router.push('/log')
+      router.push('/sub')
       break
     case 3:
+      router.push('/log')
+      break
+    case 4:
       router.push('/setting')
       break
     default:

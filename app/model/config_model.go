@@ -87,6 +87,7 @@ type SingBoxOutbounds struct {
 	Type       string   `json:"type"`
 	Outbounds  []string `json:"outbounds,omitempty"`
 	Url        string   `json:"url,omitempty"`
+	Password   string   `json:"password,omitempty"`
 	Interval   string   `json:"interval,omitempty"`
 	Tolerance  int      `json:"tolerance,omitempty"`
 	Server     string   `json:"server,omitempty"`

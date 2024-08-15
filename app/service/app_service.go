@@ -276,3 +276,23 @@ func (g *AppService) RestartAsAdmin() response.ResInfo {
 	}
 	return response.Success("已经是管理员运行")
 }
+
+// GetProxies 获取所有代理
+func (g *AppService) GetProxies() response.ResInfo {
+	clash := utils.NewClashClient()
+	proxies, err := clash.GetProxies()
+	if err != nil {
+		return response.Error("获取代理失败")
+	}
+	return response.Success(proxies)
+}
+
+// SwitchProxy 更换代理
+func (g *AppService) SwitchProxy(group, name string) response.ResInfo {
+	clash := utils.NewClashClient()
+	err := clash.SwitchProxy(group, name)
+	if err != nil {
+		return response.Error("更换代理失败")
+	}
+	return response.Success("更换代理成功")
+}

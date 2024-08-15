@@ -10,14 +10,17 @@
 import {AppService} from '@api/changeme/app/service'
 import {ref} from "vue";
 import {useMessage} from 'naive-ui'
+import useAppStore from "@/stores/app/AppStore";
 
 const url = ref('')
 const message = useMessage()
+const appState = useAppStore()
 
 // 下载订阅
 function downloadSub() {
   AppService.DownloadSubscription(url.value).then(() => {
     message.success("下载成功")
+    appState.proxyMode = ''
   })
 }
 </script>

@@ -174,3 +174,65 @@ func (c *ClashClient) GetVersion() (string, error) {
 	}
 	return string(body), nil
 }
+
+// ReloadConfig 重载配置
+func (c *ClashClient) ReloadConfig(force bool) error {
+	body := map[string]interface{}{
+		"force": force,
+	}
+	request, err := c.DoRequest("PUT", "/configs/reload", body)
+	if err != nil {
+		slog.Error("重载配置失败", "err", err)
+		return err
+	}
+	defer request.Body.Close()
+	if request.StatusCode != http.StatusOK {
+		slog.Error("重载配置失败", "status", request.Status)
+		return err
+	}
+	return nil
+}
+
+// GetProxies 获取所有代理
+func (c *ClashClient) GetProxies() (map[string]interface{}, error) {
+	request, err := c.DoRequest("GET", "/proxies", nil)
+	if err != nil {
+		slog.Error("获取代理失败", "err", err)
+		return nil, err
+	}
+	defer request.Body.Close()
+
+	body, err := io.ReadAll(request.Body)
+	if err != nil {
+		slog.Error("读取代理信息时发生错误", "err", err)
+		return nil, err
+	}
+	var proxies map[string]interface{}
+	err = json.Unmarshal(body, &proxies)
+
+	if err != nil {
+		slog.Error("解析代理信息时发生错误", "err", err)
+		return nil, err
+	}
+	return proxies, nil
+}
+
+// SwitchProxy 切换代理
+func (c *ClashClient) SwitchProxy(group, name string) error {
+	body := map[string]interface{}{
+		"name": name,
+	}
+	request, err := c.DoRequest("PUT", "/proxies/"+group, body)
+	if err != nil {
+		slog.Error("切换代理失败", "err", err)
+		return err
+	}
+	defer request.Body.Close()
+
+	if request.StatusCode != 204 {
+		slog.Error("切换代理失败", "status", request.Status)
+		return fmt.Errorf("切换代理失败")
+	}
+
+	return nil
+}

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div style="height: 100%">
     <n-card content-style="padding: 0;">
       <n-menu
           :options="menuOptions"
@@ -8,7 +8,7 @@
       >
       </n-menu>
     </n-card>
-    <n-card style="margin-top: 5px">
+    <n-card style="margin-top: 5px;height: calc(100% - 252px)">
       <n-flex vertical>
         <n-flex>
           <n-tag type="info" v-if="appStore.isAdminRun">启动模式：管理员</n-tag>
@@ -19,7 +19,7 @@
           <n-tag type="info" v-else>运行状态：未运行</n-tag>
         </div>
         <n-tag type="primary">
-          <span>使用内存：{{ events.memory.inuse }}Mb</span>
+          <span>使用内存：{{ events.memory.inuse.toFixed(2) }}Mb</span>
         </n-tag>
         <n-tag type="success">
           <span>内存限制：{{ events.memory.oslimit }}Mb</span>

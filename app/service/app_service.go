@@ -12,6 +12,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"runtime"
 	"strings"
 	"syscall"
@@ -180,6 +181,12 @@ func (g *AppService) StartCommand() response.ResInfo {
 	appUtils := utils.NewAppUtils()
 	exePath, _ := appUtils.GetAppDir("sing-box", "sing-box")
 	wordPath, _ := appUtils.GetAppDir("sing-box")
+
+	// 检查配置文件是否存在
+	cnofigPath := filepath.Join(wordPath, "config.json")
+	if !appUtils.IsFileExist(cnofigPath) {
+		return response.Error("请先下载订阅")
+	}
 	cmd := exec.Command(exePath, "run", "-D", wordPath)
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
@@ -192,7 +199,7 @@ func (g *AppService) StartCommand() response.ResInfo {
 
 	if err != nil {
 		if strings.Contains(err.Error(), "file not found") {
-			return response.Error("内核未安装，请先安装内核")
+			return response.Error("内核未安装")
 		}
 		return response.Error("Error starting command")
 	}

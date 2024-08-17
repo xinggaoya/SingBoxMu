@@ -47,7 +47,6 @@ const themeOverrides = {
 
 <template>
   <n-config-provider :theme :theme-overrides="themeOverrides" :locale="zhCN" :date-locale="dateZhCN" class="container">
-    <n-global-style/>
     <n-message-provider>
       <n-dialog-provider>
         <RouterView/>

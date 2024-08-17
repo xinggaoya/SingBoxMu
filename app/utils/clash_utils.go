@@ -57,18 +57,14 @@ func (c *ClashClient) GetLogs() {
 	request, err := c.DoRequest("GET", "/logs", nil)
 	if err != nil {
 		slog.Error("获取日志信息失败", "err", err)
-		return
-	}
-	defer request.Body.Close()
-
-	// 检查响应状态码是否为成功
-	if request.StatusCode != http.StatusOK {
-		slog.Error("获取日志信息失败", "status", request.Status)
 		// 重试
 		time.Sleep(1 * time.Second)
 		c.GetLogs()
 		return
 	}
+	defer request.Body.Close()
+
+	fmt.Printf("获取日志信息成功")
 
 	// 逐行读取日志
 	reader := bufio.NewReader(request.Body)
@@ -93,15 +89,11 @@ func (c *ClashClient) GetTraffic() {
 	request, err := c.DoRequest("GET", "/traffic", nil)
 	if err != nil {
 		slog.Error("获取流量信息失败", "err", err)
-		return
-	}
-	defer request.Body.Close()
-	if request.StatusCode != http.StatusOK {
-		slog.Error("获取流量信息失败", "status", request.Status)
 		time.Sleep(1 * time.Second)
 		c.GetTraffic()
 		return
 	}
+	defer request.Body.Close()
 
 	reader := bufio.NewReader(request.Body)
 
@@ -123,18 +115,14 @@ func (c *ClashClient) GetTraffic() {
 
 // GetMemory 获取使用内存
 func (c *ClashClient) GetMemory() {
-	request, err := c.DoRequest("GET", "", nil)
+	request, err := c.DoRequest("GET", "/memory", nil)
 	if err != nil {
 		slog.Error("获取内存信息失败", "err", err)
-		return
-	}
-	defer request.Body.Close()
-	if request.StatusCode != http.StatusOK {
-		slog.Error("获取内存信息失败", request.Status)
 		time.Sleep(1 * time.Second)
 		c.GetMemory()
 		return
 	}
+	defer request.Body.Close()
 
 	reader := bufio.NewReader(request.Body)
 
@@ -209,10 +197,12 @@ func (c *ClashClient) GetProxies() (string, error) {
 
 // SwitchProxy 切换代理
 func (c *ClashClient) SwitchProxy(group, name string) error {
-	body := map[string]interface{}{
-		"name": name,
-	}
-	request, err := c.DoRequest("PUT", "/proxies/"+group, body)
+
+	request, err := c.DoRequest("PUT", "/proxies/"+group, struct {
+		Name string `json:"name"`
+	}{
+		Name: name,
+	})
 	if err != nil {
 		slog.Error("切换代理失败", "err", err)
 		return err

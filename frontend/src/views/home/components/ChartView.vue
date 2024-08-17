@@ -8,7 +8,7 @@ import {CanvasRenderer} from "echarts/renderers";
 import {LineChart} from "echarts/charts";
 import {GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent} from "echarts/components";
 import VChart, {THEME_KEY} from "vue-echarts";
-import {onMounted, provide, ref, watch} from "vue";
+import {onMounted, provide, ref} from "vue";
 import {useEventsStore} from "@/stores/events/EventsStore";
 
 use([
@@ -81,6 +81,7 @@ const option = ref<any>({
 const events = useEventsStore()
 
 onMounted(()=>{
+  updateData(0, 0)
   setInterval(()=>{
     handleTrafficData(events.traffic)
   }, 1000)

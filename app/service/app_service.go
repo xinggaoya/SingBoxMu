@@ -207,8 +207,6 @@ func (g *AppService) StartCommand() response.ResInfo {
 	slog.Info("Started command with PID %d\n", cmd.Process.Pid)
 	singBox = cmd
 
-	ListenKernelInfo()
-
 	return response.Success("内核已启动")
 }
 
@@ -225,14 +223,6 @@ func (g *AppService) StopCommand() response.ResInfo {
 		return response.Success("内核已停止")
 	}
 	return response.Error("内核未启动")
-}
-
-// ListenKernelInfo 监听日志
-func ListenKernelInfo() {
-	clash := utils.NewClashClient()
-	go clash.GetLogs()
-	go clash.GetMemory()
-	go clash.GetTraffic()
 }
 
 // RestartCommand Function to restart a command

@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/wailsapp/wails/v3/pkg/application"
 	"io"
+	"log"
 	"log/slog"
 	"net/http"
 	"time"
@@ -34,7 +35,7 @@ func NewClashClient() *ClashClient {
 
 // InitRequestHeaders 初始化请求头
 func (c *ClashClient) InitRequestHeaders(req *http.Request) {
-	req.Header.Set("Authorization", "Bearer ID_k2am62qu")
+	req.Header.Set("Authorization", "Bearer CDBEA571-B1FC-4AEF-A8BE-1E5B3D11B9C2")
 }
 
 // DoRequest 执行HTTP请求
@@ -185,14 +186,28 @@ func (c *ClashClient) GetProxies() (string, error) {
 		fmt.Printf("获取代理失败")
 		return "", err
 	}
+
 	defer request.Body.Close()
 
-	body, err := io.ReadAll(request.Body)
-	if err != nil {
-		slog.Error("读取代理信息时发生错误", "err", err)
-		return "", err
+	// Define a buffer size for reading chunks of data.
+	bufferSize := 4096
+
+	var buffer []byte
+	// Read the response body chunk by chunk and process each chunk.
+	for {
+		chunk := make([]byte, bufferSize)
+		reader := io.LimitReader(request.Body, int64(bufferSize)) // Re-create LimitReader for each iteration
+		n, err := reader.Read(chunk)
+		if n > 0 {
+			buffer = append(buffer, chunk[:n]...)
+		}
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			log.Fatalf("Error reading from stream: %v", err)
+		}
 	}
-	return string(body), nil
+	return string(buffer), nil
 }
 
 // SwitchProxy 切换代理

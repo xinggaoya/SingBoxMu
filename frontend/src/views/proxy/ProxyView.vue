@@ -26,36 +26,30 @@
 </template>
 <script setup lang="ts">
 import {onMounted, ref} from "vue";
-import {ClashService} from "@api/changeme/app/service";
 import {useMessage} from "naive-ui";
+import {GetProxies, SwitchProxy} from "@/api/clash/ClashApi";
 
 const proxies = ref<any>({})
 const message = useMessage()
 
 onMounted(() => {
-  ClashService.GetProxies().then(res => {
-    if (res.code === 10000) {
-      const info = JSON.parse(res.data)
-      console.log(info)
-      // 循环对象属性
-      Object.keys(info.proxies).forEach(key => {
-        // 获取属性值
-        const value = info.proxies[key]
-        if (value.all.length > 0) {
-          proxies.value[key] = value
-        }
-      })
-    }
+  GetProxies().then((res: any) => {
+    // 循环对象属性
+    Object.keys(res.proxies).forEach(key => {
+      // 获取属性值
+      const value = res.proxies[key]
+      if (value.all?.length > 0) {
+        proxies.value[key] = value
+      }
+    })
   })
 })
 
 function switchProxy(group: any, name: string) {
-  ClashService.SwitchProxy(group, name).then(res => {
-    if (res.code === 10000) {
-      message.success("切换成功")
-    } else {
-      message.error(res.msg)
-    }
+  SwitchProxy(group, name).then(() => {
+    message.success("切换成功")
+  }).catch(()=>{
+    message.error("切换失败")
   })
 }
 

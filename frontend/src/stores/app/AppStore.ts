@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
-import {ClashService} from "@api/changeme/app/service";
 import {useEventsStore} from "@/stores/events/EventsStore";
+import {GetVersion} from "@/api/clash/ClashApi";
 
 
 interface kernelVersionConfig {
@@ -29,16 +29,16 @@ export const useAppStore = defineStore('app', () => {
     const events = useEventsStore()
 
     // 获取版本
-    function getKernelVersion():Promise<void> {
+    function getKernelVersion(): Promise<void> {
         return new Promise((resolve) => {
-            ClashService.GetVersion().then((res) => {
-                if (res.code === 10000) {
-                    isRunning.value = true
-                    kernelVersion.value = JSON.parse(res.data)
-                    events.listen()
-                } else {
-                    isRunning.value = false
-                }
+            GetVersion().then((res: any) => {
+                isRunning.value = true
+                kernelVersion.value = res
+                events.listen()
+                resolve()
+            }).catch(() => {
+                isRunning.value = false
+            }).finally(()=>{
                 resolve()
             })
         })

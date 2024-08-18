@@ -1,6 +1,6 @@
 import {defineStore} from 'pinia'
 import {ref} from 'vue'
-import {Events} from "@wailsio/runtime";
+import {GetLogs, GetMemory, GetTraffic} from "@/api/clash/ClashApi";
 
 interface logConfig {
     type: string,
@@ -33,30 +33,63 @@ export const useEventsStore = defineStore('Events', () => {
 
         // 监听事件
         function listen() {
-            Events.On("logs", (data: any) => {
-                logs.value.push(JSON.parse(data.data))
-                // 仅保留最新100条
-                if (logs.value.length > 50) {
-                    logs.value.shift()
+            // Events.On("logs", (data: any) => {
+            //     logs.value.push(JSON.parse(data.data))
+            //     // 仅保留最新100条
+            //     if (logs.value.length > 50) {
+            //         logs.value.shift()
+            //     }
+            // })
+            // Events.On("traffic", (data: any) => {
+            //     const info = JSON.parse(data.data)
+            //     // 转换为MB 保留小数点后2位
+            //     info.up = (info.up / 1024 / 1024)
+            //     info.down = (info.down / 1024 / 1024)
+            //     traffic.value.up = info.up
+            //     traffic.value.down = info.down
+            //     totalUseTraffic.value += (info.up + info.down)
+            // })
+            // Events.On("memory", (data: any) => {
+            //     const info = JSON.parse(data.data)
+            //     // 转换为MB 保留小数点后2位
+            //     info.inuse = (info.inuse / 1024 / 1024)
+            //     info.oslimit = (info.oslimit / 1024 / 1024)
+            //     memory.value = info
+            // })
+
+            GetLogs((_, chunk) => {
+                const text = new TextDecoder("utf-8").decode(chunk);
+                if (text) {
+                    logs.value.push(JSON.parse(text))
+                    // 仅保留最新100条
+                    if (logs.value.length > 50) {
+                        logs.value.shift()
+                    }
                 }
             })
-            Events.On("traffic", (data: any) => {
-                const info = JSON.parse(data.data)
-                // 转换为MB 保留小数点后2位
-                info.up = (info.up / 1024 / 1024)
-                info.down = (info.down / 1024 / 1024)
-                traffic.value.up = info.up
-                traffic.value.down = info.down
-                totalUseTraffic.value += (info.up + info.down)
+            GetMemory((_, chunk) => {
+                const text = new TextDecoder("utf-8").decode(chunk);
+                if (text) {
+                    const info = JSON.parse(text)
+                    // 转换为MB 保留小数点后2位
+                    info.inuse = (info.inuse / 1024 / 1024)
+                    info.oslimit = (info.oslimit / 1024 / 1024)
+                    memory.value = info
+                }
             })
-            Events.On("memory", (data: any) => {
-                const info = JSON.parse(data.data)
-                console.log(info)
-                // 转换为MB 保留小数点后2位
-                info.inuse = (info.inuse / 1024 / 1024)
-                info.oslimit = (info.oslimit / 1024 / 1024)
-                memory.value = info
+            GetTraffic((_, chunk) => {
+                const text = new TextDecoder("utf-8").decode(chunk);
+                if (text) {
+                    const info = JSON.parse(text)
+                    // 转换为MB 保留小数点后2位
+                    info.up = (info.up / 1024 / 1024)
+                    info.down = (info.down / 1024 / 1024)
+                    traffic.value.up = info.up
+                    traffic.value.down = info.down
+                    totalUseTraffic.value += (info.up + info.down)
+                }
             })
+
         }
 
         return {logs, traffic, memory, listen, totalUseTraffic}

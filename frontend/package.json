@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "echarts": "^5.5.1",
+    "ky": "^1.7.0",
     "naive-ui": "^2.39.0",
     "pinia": "^2.1.7",
     "pinia-plugin-persistedstate": "^3.2.1",

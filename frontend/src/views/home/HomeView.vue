@@ -17,8 +17,18 @@
           <n-button type="primary" size="small" v-if="!appStore.isAdminRun" ghost @click="restartAdminSingBox">
             以管理员重启
           </n-button>
-          <n-button type="primary" @click="startSingBox" :disabled="appStore.isRunning">启动</n-button>
-          <n-button type="error" @click="stopSingBox" :disabled="!appStore.isRunning">停止</n-button>
+          <n-button type="primary" @click="startSingBox"
+                    :disabled="appStore.isRunning">
+            <template v-slot:icon>
+              <ChevronForwardCircleOutline/>
+            </template>
+          </n-button>
+          <n-button type="error" @click="stopSingBox"
+                    :disabled="!appStore.isRunning">
+            <template v-slot:icon>
+              <BanSharp/>
+            </template>
+          </n-button>
         </n-flex>
       </n-flex>
     </n-card>
@@ -36,6 +46,7 @@ import ChartView from "@/views/home/components/ChartView.vue";
 import useAppStore from "@/stores/app/AppStore";
 import {useEventsStore} from "@/stores/events/EventsStore";
 import {useConfigStore} from "@/stores/config/ConfigStore";
+import {BanSharp,ChevronForwardCircleOutline} from '@vicons/ionicons5'
 
 const message = useMessage()
 const appStore = useAppStore()

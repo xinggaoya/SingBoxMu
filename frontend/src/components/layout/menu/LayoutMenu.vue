@@ -8,16 +8,24 @@
       >
       </n-menu>
     </n-card>
-    <n-card style="margin-top: 5px;height: calc(100% - 252px)">
+    <n-card style="margin-top: 5px;height: calc(100% - 252px)" content-style="padding: 10px">
       <n-flex vertical>
-        <n-flex>
-          <n-tag type="info" v-if="appStore.isAdminRun">启动模式：管理员</n-tag>
+        <n-flex justify="space-between">
+          <n-tag type="success">
+            {{ events.traffic.down.toFixed(2) }}mb/s
+          </n-tag>
+          <n-tag type="warning">
+            {{ events.traffic.up.toFixed(2) }}mb/s
+          </n-tag>
+        </n-flex>
+        <n-flex vertical>
+          <n-tag type="success" v-if="appStore.isAdminRun">启动模式：管理员</n-tag>
           <n-tag type="info" v-else>启动模式：普通</n-tag>
         </n-flex>
-        <div>
+        <n-flex vertical>
           <n-tag type="success" v-if="appStore.isRunning">运行状态：运行中</n-tag>
           <n-tag type="info" v-else>运行状态：未运行</n-tag>
-        </div>
+        </n-flex>
         <n-tag type="primary">
           <span>使用内存：{{ events.memory.inuse.toFixed(2) }}Mb</span>
         </n-tag>
@@ -36,7 +44,13 @@
 import {computed, h, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {NIcon} from 'naive-ui'
-import {AtCircleOutline, BarChartOutline, InformationCircleOutline, SettingsOutline,BalloonOutline} from '@vicons/ionicons5'
+import {
+  AtCircleOutline,
+  BalloonOutline,
+  BarChartOutline,
+  InformationCircleOutline,
+  SettingsOutline
+} from '@vicons/ionicons5'
 import {useEventsStore} from "@/stores/events/EventsStore";
 import useAppStore from "@/stores/app/AppStore";
 

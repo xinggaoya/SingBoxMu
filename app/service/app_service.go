@@ -176,6 +176,14 @@ func (g *AppService) ChangeProxyMode(mode string) response.ResInfo {
 	return response.Error("切换失败，未知的模式")
 }
 
+// IsRunning 判断是否在运行
+func (g *AppService) IsRunning() response.ResInfo {
+	if singBox != nil && singBox.Process != nil {
+		return response.Success(true)
+	}
+	return response.Error("内核未启动")
+}
+
 // StartCommand 启动内核
 func (g *AppService) StartCommand() response.ResInfo {
 	appUtils := utils.NewAppUtils()

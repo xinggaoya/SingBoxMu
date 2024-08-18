@@ -8,8 +8,9 @@ import {CanvasRenderer} from "echarts/renderers";
 import {LineChart} from "echarts/charts";
 import {GridComponent, LegendComponent, TitleComponent, ToolboxComponent, TooltipComponent} from "echarts/components";
 import VChart, {THEME_KEY} from "vue-echarts";
-import {onMounted, provide, ref} from "vue";
+import {onMounted, provide, ref, watch} from "vue";
 import {useEventsStore} from "@/stores/events/EventsStore";
+import {useAppStore} from '@/stores/app/AppStore'
 
 use([
   CanvasRenderer,
@@ -79,12 +80,21 @@ const option = ref<any>({
 
 
 const events = useEventsStore()
+const appStore = useAppStore()
+let timer: any = null;
 
-onMounted(()=>{
+onMounted(() => {
   updateData(0, 0)
-  setInterval(()=>{
-    handleTrafficData(events.traffic)
-  }, 1000)
+})
+
+watch(() => appStore.isRunning, (value) => {
+  if (value) {
+    timer = setInterval(() => {
+      handleTrafficData(events.traffic)
+    }, 1000)
+  } else {
+    clearInterval(timer)
+  }
 })
 
 function handleTrafficData(data: any) {

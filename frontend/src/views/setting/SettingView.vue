@@ -29,10 +29,10 @@
 <script setup lang="ts">
 import {useConfigStore} from "@/stores/config/ConfigStore";
 import {AppService} from "@api/changeme/app/service";
-import {ClashService} from "@api/changeme/app/service";
 import {onMounted, ref} from "vue";
 import {useMessage} from "naive-ui";
 import {Events} from "@wailsio/runtime";
+import {GetVersion} from "@/api/clash/ClashApi";
 
 const configStore = useConfigStore()
 const formRef = ref()
@@ -41,10 +41,9 @@ const version = ref<any>()
 const percentage = ref<number>(0)
 
 onMounted(() => {
-  ClashService.GetVersion().then((res: any) => {
-    const date = JSON.parse(res.data)
-    if (date) {
-      version.value = date.version
+  GetVersion().then((res: any) => {
+    if (res) {
+      version.value = res.version
     }
   })
 })

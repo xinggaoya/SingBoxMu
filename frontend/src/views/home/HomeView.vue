@@ -40,29 +40,15 @@
 
 <script setup lang="ts">
 import {AppService} from '@api/changeme/app/service'
-import {onMounted} from "vue";
 import {useMessage} from 'naive-ui'
 import ChartView from "@/views/home/components/ChartView.vue";
 import useAppStore from "@/stores/app/AppStore";
 import {useEventsStore} from "@/stores/events/EventsStore";
-import {useConfigStore} from "@/stores/config/ConfigStore";
 import {BanSharp,ChevronForwardCircleOutline} from '@vicons/ionicons5'
 
 const message = useMessage()
 const appStore = useAppStore()
-const config = useConfigStore()
 const events = useEventsStore()
-
-onMounted(() => {
-  appStore.getKernelVersion().then(() => {
-    if (config.form.autoRun && !appStore.isRunning) {
-      if (!appStore.isAdminRun && appStore.proxyMode === 'tun') {
-        changeProxyMode('system')
-      }
-      startSingBox()
-    }
-  })
-})
 
 // 切换代理模式
 function changeProxyMode(mode: string) {
@@ -79,8 +65,6 @@ function changeProxyMode(mode: string) {
     }
   })
 }
-
-
 
 function restartAdminSingBox() {
   AppService.RestartAsAdmin().then((res) => {

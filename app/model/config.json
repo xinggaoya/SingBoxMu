@@ -1,8 +1,5 @@
 {
-  "log": {
-    "level": "info",
-    "timestamp": true
-  },
+  "log": { "level": "info", "timestamp": true },
   "experimental": {
     "clash_api": {
       "external_controller": "127.0.0.1:20123",
@@ -11,31 +8,23 @@
       "external_ui_download_url": "",
       "default_mode": "rule"
     },
-    "cache_file": {
-      "enabled": true,
-      "store_fakeip": true,
-      "store_rdrc": false
-    }
+    "cache_file": { "enabled": true, "store_fakeip": true, "store_rdrc": false }
   },
   "inbounds": [
     {
       "type": "mixed",
-      "listen": "127.0.0.1",
-      "listen_port": 20122,
-      "sniff": true,
-      "sniff_override_destination": false,
-      "tcp_fast_open": false,
-      "tcp_multi_path": false,
-      "udp_fragment": false
+      "listen": "0.0.0.0",
+      "listen_port": 1081,
+      "set_system_proxy": true
     }
   ],
   "outbounds": [
     {
       "tag": "🚀 节点选择",
       "type": "selector",
-      "outbounds": [
-        "🎈 自动选择"
-      ]
+      "outbounds": ["🎈 自动选择"],
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
       "tag": "🎈 自动选择",
@@ -43,31 +32,30 @@
       "outbounds": [],
       "url": "https://www.gstatic.com/generate_204",
       "interval": "300s",
-      "tolerance": 150
+      "tolerance": 150,
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
       "tag": "🎯 全球直连",
       "type": "selector",
-      "outbounds": [
-        "direct",
-        "block"
-      ]
+      "outbounds": ["direct", "block"],
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
       "tag": "🛑 全球拦截",
       "type": "selector",
-      "outbounds": [
-        "block",
-        "direct"
-      ]
+      "outbounds": ["block", "direct"],
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
       "tag": "🐟 漏网之鱼",
       "type": "selector",
-      "outbounds": [
-        "🚀 节点选择",
-        "🎯 全球直连"
-      ]
+      "outbounds": ["🚀 节点选择", "🎯 全球直连"],
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
       "tag": "GLOBAL",
@@ -80,94 +68,72 @@
         "🎯 全球直连",
         "🛑 全球拦截",
         "🐟 漏网之鱼"
-      ]
+      ],
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
+      "tag": "direct",
       "type": "direct",
-      "tag": "direct"
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
+      "tag": "dns-out",
       "type": "dns",
-      "tag": "dns-out"
+      "transport": { "headers": {} },
+      "tls": {}
     },
     {
+      "tag": "block",
       "type": "block",
-      "tag": "block"
+      "transport": { "headers": {} },
+      "tls": {}
     }
   ],
   "route": {
-    "rule_set": [
-      {
-        "tag": "CATEGORY-ADS",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/category-ads-all.srs",
-        "download_detour": "🎯 全球直连"
-      },
-      {
-        "tag": "GEOIP-CN",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geoip/cn.srs",
-        "download_detour": "🎯 全球直连"
-      },
-      {
-        "tag": "GEOSITE-CN",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/cn.srs",
-        "download_detour": "🎯 全球直连"
-      },
-      {
-        "tag": "GEOLOCATION-!CN",
-        "type": "remote",
-        "format": "binary",
-        "url": "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@sing/geo/geosite/geolocation-!cn.srs",
-        "download_detour": "🎯 全球直连"
-      }
-    ],
     "rules": [
       {
-        "protocol": "dns",
-        "port": 53,
-        "outbound": "dns-out"
-      },
-      {
-        "clash_mode": "direct",
+        "ip_is_private": true,
         "outbound": "direct"
       },
       {
-        "clash_mode": "global",
-        "outbound": "GLOBAL"
+        "rule_set": "geoip-cn",
+        "outbound": "direct"
       },
       {
-        "network": "udp",
-        "port": 443,
-        "outbound": "🛑 全球拦截"
+        "rule_set": "geosite-cn",
+        "outbound": "direct"
       },
       {
-        "rule_set": "CATEGORY-ADS",
-        "outbound": "🛑 全球拦截"
-      },
-      {
-        "ip_is_private": true,
-        "outbound": "🎯 全球直连"
-      },
-      {
-        "rule_set": "GEOIP-CN",
-        "outbound": "🎯 全球直连"
-      },
-      {
-        "rule_set": "GEOSITE-CN",
-        "outbound": "🎯 全球直连"
-      },
-      {
-        "rule_set": "GEOLOCATION-!CN",
-        "outbound": "🚀 节点选择"
+        "rule_set": "geoip-us",
+        "rule_set_ipcidr_match_source": true,
+        "outbound": "block"
       }
     ],
-    "final": "🐟 漏网之鱼",
-    "auto_detect_interface": true
+    "rule_set": [
+      {
+        "tag": "geoip-cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-cn.srs",
+        "download_detour": "🚀 节点选择"
+      },
+      {
+        "tag": "geoip-us",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geoip/rule-set/geoip-us.srs",
+        "download_detour": "🚀 节点选择"
+      },
+      {
+        "tag": "geosite-cn",
+        "type": "remote",
+        "format": "binary",
+        "url": "https://raw.githubusercontent.com/SagerNet/sing-geosite/rule-set/geosite-cn.srs",
+        "download_detour": "🚀 节点选择"
+      }
+    ]
   },
   "dns": {
     "servers": [
@@ -193,43 +159,24 @@
         "address": "8.8.8.8",
         "detour": "🚀 节点选择"
       },
-      {
-        "tag": "block",
-        "address": "rcode://success"
-      }
+      { "tag": "block", "address": "rcode://success" }
     ],
     "disable_cache": false,
     "disable_expire": false,
     "independent_cache": false,
     "rules": [
-      {
-        "outbound": "any",
-        "disable_cache": true,
-        "server": "local-dns"
-      },
-      {
-        "clash_mode": "direct",
-        "server": "local-dns"
-      },
-      {
-        "clash_mode": "global",
-        "server": "remote-dns"
-      },
-      {
-        "rule_set": "GEOSITE-CN",
-        "server": "local-dns"
-      },
-      {
-        "rule_set": "GEOLOCATION-!CN",
-        "server": "remote-dns"
-      }
+      { "outbound": "any", "disable_cache": true, "server": "local-dns" },
+      { "server": "local-dns", "clash_mode": "direct" },
+      { "server": "remote-dns", "clash_mode": "global" },
+      { "server": "local-dns", "rule_set": "geosite-cn" },
+      { "server": "remote-dns", "rule_set": "geoip-us" }
     ],
     "fakeip": {
-      "enabled": false,
-      "inet4_range": "198.18.0.1/16",
+      "enabled": true,
+      "inet4_range": "198.18.0.0/15",
       "inet6_range": "fc00::/18"
     },
     "final": "remote-dns",
-    "strategy": "ipv4_only"
+    "strategy": "prefer_ipv6"
   }
 }

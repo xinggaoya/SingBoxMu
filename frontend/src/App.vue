@@ -2,7 +2,7 @@
 import {RouterView} from 'vue-router'
 import {darkTheme, dateZhCN, zhCN} from "naive-ui";
 import {computed} from "vue";
-import useAppStore from "@/stores/app/AppStore.ts";
+import useAppStore from "@/stores/app/AppStore";
 
 const appStore = useAppStore()
 

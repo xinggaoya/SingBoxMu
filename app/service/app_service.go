@@ -124,6 +124,10 @@ func (g *AppService) DownloadSubscription(url string) response.ResInfo {
 		inInfo.Outbounds[1].Outbounds = append(inInfo.Outbounds[1].Outbounds, item.Tag)
 	}
 
+	inInfo.Route.RuleSet[0].DownloadDetour = newInfo.Outbounds[0].Tag
+	inInfo.Route.RuleSet[1].DownloadDetour = newInfo.Outbounds[0].Tag
+	inInfo.Route.RuleSet[2].DownloadDetour = newInfo.Outbounds[0].Tag
+
 	// 处理订阅
 	for _, item := range inInfo.Outbounds {
 		if !item.Tls.Enabled {
@@ -139,8 +143,8 @@ func (g *AppService) DownloadSubscription(url string) response.ResInfo {
 
 	err = os.WriteFile(config, data, 0644)
 	if err != nil {
-		slog.Error("Failed to write config", "error", err)
-		return response.Error("写入配置失败")
+		slog.Error("Failed to write config file", "error", err)
+		return response.Error("写入配置文件失败")
 	}
 	return response.Success("下载订阅成功")
 }

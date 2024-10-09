@@ -1,5 +1,4 @@
-/.idea
-/bin
-/bin/sing-box
-/.task
+/.idea/
+/bin/
+/.task/
 /wails.syso
